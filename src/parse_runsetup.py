@@ -90,8 +90,15 @@ def load_runsetup(path):
 
 
 def _read_csv(path):
-    with path.open(newline="", encoding="utf-8-sig") as f:
-        return [[c.strip() for c in row] for row in csv.reader(f)]
+    last_err = None
+    for enc in ("utf-8-sig", "cp1252", "latin-1"):
+        try:
+            with path.open(newline="", encoding=enc) as f:
+                return [[c.strip() for c in row] for row in csv.reader(f)]
+        except UnicodeDecodeError as e:
+            last_err = e
+            continue
+    raise last_err
 
 
 def _find_label_value(rows, label):
