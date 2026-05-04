@@ -1,0 +1,21 @@
+# Default: let Git auto-detect text vs binary, normalize text on commit
+* text=auto
+
+# Explicit text files — always LF in the repo, native on checkout
+*.py     text eol=lf
+*.yaml   text eol=lf
+*.yml    text eol=lf
+*.md     text eol=lf
+*.txt    text eol=lf
+*.csv    text eol=lf
+*.xml    text eol=lf
+*.json   text eol=lf
+*.gitignore text eol=lf
+
+# Explicit binary — never touch
+*.xlsx   binary
+*.xlsm   binary
+*.png    binary
+*.jpg    binary
+*.jpeg   binary
+*.pdf    binary
