@@ -216,3 +216,31 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+
+# Virtual envs
+.venv/
+venv/
+env/
+
+# Editor
+.vscode/*
+!.vscode/settings.json
+
+# Secrets / env
+.env
+*.log
+
+# Excel — default ignore so you don't accidentally commit a sensitive Run Set Up
+*.xlsx
+*.xlsm
+
+# ...EXCEPT the test fixtures, which ARE the regression tests
+!tests/fixtures/**/*.xlsx
+!tests/fixtures/**/*.xlsm
