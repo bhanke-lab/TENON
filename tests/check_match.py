@@ -9,6 +9,7 @@ Usage:
 from __future__ import annotations
 
 import csv
+from marshal import dump
 import sys
 from pathlib import Path
 
@@ -110,12 +111,56 @@ def main(fixture_dir: Path):
     if catalog_gaps:
         print("⚠️  CATALOG GAP — answer key contains products not in catalog:")
         for p in sorted(catalog_gaps):
-            print(f"  {p[0]:5} {p[1]:18} {p[2]:6} w={p[3]:18} l={p[4]}")
+            print(f"    {p[0]:5} {p[1]:18} {p[2]:6} w={p[3]:18} l={p[4]}")
         print()
         print("Fix the catalog (add to AllProducts.xml or re-pull from the live")
         print("Comact) before tuning mapping.yaml — rule changes can't conjure")
         print("products that don't exist in the master catalog.")
         sys.exit(2)
+
+    # Cross-check live operator counts (if captured) against catalog counts.
+    # The pre-flight above catches catalog gaps surfaced by THIS fixture's
+    # answer key. live_counts.txt catches drift for products not in this
+    # answer key but present on the live Comact — e.g., next time Nate
+    # hand-adds something at the UI, the count divergence flags it before
+    # the next fixture trips over it. Warning only; doesn't exit.
+    live_counts_path = fixture_dir / "live_counts.txt"
+    if live_counts_path.exists():
+        catalog_by_species = {}
+        for p in products:
+            catalog_by_species[p.species] = catalog_by_species.get(p.species, 0) + 1
+        drifts = []
+        for raw in live_counts_path.read_text(encoding="utf-8").splitlines():
+            line = raw.strip()
+            if not line or line.startswith("#"):
+                continue
+            # Format: [<SPECIES>] active=<N> available=<N> total=<N>
+            try:
+                species_part, rest = line.split("]", 1)
+                species = species_part.lstrip("[").strip()
+                kv = {}
+                for token in rest.split():
+                    if "=" in token:
+                        k, v = token.split("=", 1)
+                        kv[k] = v
+                live_total = int(kv["total"])
+            except (ValueError, KeyError):
+                print(f"⚠️  live_counts.txt: could not parse line: {line!r}")
+                continue
+            catalog_total = catalog_by_species.get(species, 0)
+            if live_total != catalog_total:
+                drifts.append((species, live_total, catalog_total))
+        if drifts:
+            print("⚠️  CATALOG DRIFT — live operator counts disagree with catalog:")
+            for species, live, cat in drifts:
+                delta = live - cat
+                print(f"    {species}: live={live} catalog={cat} (delta={delta:+d})")
+            print()
+            print("Live = Active+Available counts under the [<SPECIES>] filter")
+            print("on the Comact. Catalog = products in the current XML for that")
+            print("species. Drift means re-pull AllProducts.xml or hand-patch")
+            print("_catalogs/<latest>.xml. Warning only — diff continues.")
+            print()
 
     documented = {k[0] for k in answer_key}
 
@@ -128,9 +173,9 @@ def main(fixture_dir: Path):
     print(f"Documented thicknesses: {sorted(documented)}  (others ignored)")
     print(f"Answer key:             {len(answer_key)} active products")
     print(f"Predicted (in scope):   {len(pred_in_scope)}")
-    print(f"  ✓ Correct:            {len(correct)}")
-    print(f"  ✗ Extra:              {len(extra)}  (predicted but NOT active)")
-    print(f"  ✗ Missing:            {len(missing)}  (active but NOT predicted)")
+    print(f"  ✓ Correct:      {len(correct)}")
+    print(f"  ✗ Extra:        {len(extra)} (predicted but NOT active)")
+    print(f"  ✗ Missing-rule: {len(missing)} (active but NOT predicted; catalog gaps already exit above)")
     print()
 
     def dump(label, s):
@@ -142,7 +187,7 @@ def main(fixture_dir: Path):
         print()
 
     dump("EXTRA (false positives)", extra)
-    dump("MISSING (false negatives)", missing)
+    dump("MISSING-RULE (false negatives — catalog gaps caught by pre-flight)", missing)
     if not extra and not missing:
         print(" Perfect match across documented thicknesses.")
 
