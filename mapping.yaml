@@ -1,57 +1,61 @@
-# mapping.yaml — Run Set Up -> Comact translation rules. v0.
-# Every translation rule lives here. Refine as we reconcile against fixtures;
-# never bury rules in code.
-
-# Run Set Up grade code -> allowed Comact grade strings on a product.
-# mapping.yaml v0.5 — Run Set Up codes → Comact grade/color names.
-# Validated against the Soft Maple 4/27/26 fixture.
+# mapping.yaml v0.8 — Run Set Up codes → Comact grade/color/auto rules.
+# Validated against fixtures: sma_2026-04-27, hmw_2026-05-04.
+# All translation rules live here; never bury them in code..
 
 grade_map:
-  PR:
-    - FAS OPT
-    - "FAS OPT 6-7'"
-    - FASS OPT
-    - FASB OPT
-    - FASR OPT
-    - FASSAP OPT
-    - FAS QUARTER SAW OPT
-    - FAS STAIN
-    - FAS STAIN 2ND SPECIE
-    - FAS2CHPY OPT
-    - FAS9050 OPT
-    - SEL OPT
-    - SEL SAP OPT
-    - SEL9050 OPT
-    - SEL1W OPT
-    - SEL2W OPT
-  1C:
-    - 1COM OPT
-    - 1COM SAP OPT
-    - 1COMB OPT
-    - 1COM9050 OPT
-  2C:
-    - 2COM OPT
-    - 2COM SAP OPT
-  3A:
-    - 3ACOM OPT
-  3B:
-    - 3B OPT
-  SG:
-    - SUBG OPT
-    - 3B OPT          # "all 3b" callout
-    - WORMY           # "sound pallet" — wormy sound is structural pass
-    - WORMY MARK      # ditto, marked variant
-    - 1COMB OPT       # "brown 1com"
-    - CHAR OPT        # not in SMA catalog; harmless across species
+  PR:   [SEL OPT]            # ← was [FAS OPT, FASS OPT, SEL OPT, SEL SAP OPT]
+  SEL:  [SEL OPT, SEL SAP OPT]
+  "1C": [1COM OPT, 1COM SAP OPT, 1COMB OPT]
+  "2C": [2COM OPT, 2COM SAP OPT]
+  "3C": [3ACOM OPT]
+  SG:   [SUBG OPT, 3B OPT, 1COMB OPT, WORMY OPT, WORMY MARK OPT]
+  "3B": [3B OPT]
+
+auto_activate:
+  - grade: 3ACOM OPT
+    colors: [SAP, Unsel]
+    species: ANY
+    thicknesses: ANY
+
+  # NEW: FASS OPT + SEL SAP OPT only fire at 8/4, where multi-dest union is real
+  - grade: FASS OPT
+    colors: [SAP]
+    species: [SMA, HMW]
+    thicknesses: ["8/4"]
+  - grade: SEL SAP OPT
+    colors: [SAP]
+    species: [SMA, HMW]
+    thicknesses: ["8/4"]
+
+  # NEW: Unsel-flavor FAS at thin HMW thicknesses, where SAP+BTR-only PR rows
+  # still need a heart-faced bin and FAS OPT Unsel is the only PR catalog entry
+  - grade: FAS OPT
+    colors: [Unsel]
+    species: [HMW]
+    thicknesses: ["4/4", "6/4"]
+
+  - grade: FAS1W OPT
+    colors: [1White]
+    species: [HMW]
+    thicknesses: ["8/4"]
+  - grade: FAS2W OPT
+    colors: [1White]
+    species: [HMW]
+    thicknesses: ["8/4"]
+
+  - grade: FASB OPT
+    colors: [Unsel]
+    species: [HMW]
+    thicknesses: ["8/4", "10/4", "12/4", "16/4"]
+    confidence: provisional
 
 color_map:
-  UNSEL:
-    - Unsel
-    - "?"
-    - SAP             # UNSEL = "no color sort enforced" → accepts SAP too
-    - 1White
-  SAP+BTR:
-    - SAP             # strict SAP only
+  UNSEL:    [Unsel, "?", SAP, 1White]
+  SAP+BTR:  [SAP]
+  "12W":    [1White]
+  W2F:      [1White]
+  W1F:      [1White]
+  BROWN:    [Unsel, "?"]
 
 width_tokens:
   RandomW:        { min: 0,    max: 99 }

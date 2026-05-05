@@ -12,7 +12,6 @@ def load_mapping(path):
     with Path(path).open("r", encoding="utf-8") as f:
         return yaml.safe_load(f)
 
-
 def match_for_row(row, products, run_species, mapping,
                   width_unmapped=None, length_unmapped=None,
                   apply_width_filter=False, apply_length_filter=False):
@@ -64,12 +63,83 @@ def match_for_row(row, products, run_species, mapping,
         matches.append(p)
     return matches
 
+from collections import defaultdict
+
+
+def apply_multi_destination_union(rows, products, run_species, mapping, predicted):
+    """
+    v0.8 rule: when 2+ rows at the same (thick, grade_code) specify different
+    color_codes (e.g. one destination wants UNSEL, another SAP+BTR), activate
+    ALL color variants present in catalog at that thick x grade x species.
+    Mutates predicted (instance_id -> Product) in place; returns added IDs.
+    """
+    by_grade = defaultdict(set)
+    for r in rows:
+        by_grade[(r.thick, r.grade_code)].add(r.color_code)
+
+    added = set()
+    for (thick, grade_code), colors in by_grade.items():
+        if len(colors) <= 1:
+            continue
+        allowed_grades = set(mapping["grade_map"].get(grade_code, []))
+        for p in products:
+            if p.species != run_species:
+                continue
+            if p.thick != thick:
+                continue
+            if p.grade not in allowed_grades:
+                continue
+            if p.instance_id not in predicted:
+                predicted[p.instance_id] = p
+                added.add(p.instance_id)
+    return added
+def apply_auto_activate(thicks_in_runsetup, products, run_species, mapping, predicted):
+    """
+    v0.8 rule: apply mapping["auto_activate"] entries. Each entry has
+    grade (str), colors (list[str]), species ("ANY" or list[str]),
+    thicknesses ("ANY" or list[str]).
+    Only activates at thicknesses the run actually touches (so we don't
+    light up 8/4 HMW FAS1W on a 4/4-only run).
+    """
+    added = set()
+    for rule in mapping.get("auto_activate", []):
+        species_scope = rule.get("species", "ANY")
+        if species_scope != "ANY" and run_species not in species_scope:
+            continue
+        thick_scope = rule.get("thicknesses", "ANY")
+        if thick_scope == "ANY":
+            allowed_thicks = thicks_in_runsetup
+        else:
+            allowed_thicks = set(thick_scope) & thicks_in_runsetup
+        rule_colors = set(rule["colors"])
+        for p in products:
+            if p.species != run_species:
+                continue
+            if p.thick not in allowed_thicks:
+                continue
+            if p.grade != rule["grade"]:
+                continue
+            if p.color not in rule_colors:
+                continue
+            if p.instance_id not in predicted:
+                predicted[p.instance_id] = p
+                added.add(p.instance_id)
+    return added
+
 
 def match_all(runsetup, products, mapping):
+    """
+    Returns (per_row_results, width_unmapped, length_unmapped, predicted).
+    per_row_results keeps the row-by-row breakdown for diagnostic output.
+    predicted is the v0.8 post-pass set (dict instance_id -> Product) used
+    by check_match.py for the diff against the answer key. It includes
+    products from row matches PLUS multi-destination union PLUS auto-activate
+    rules; the latter two aren't tied to any single row.
+    """
     width_unmapped = set()
     length_unmapped = set()
     out = []
-
+    predicted = {}  # instance_id -> Product
     for row in runsetup.lumber_rows:
         ms = match_for_row(
             row,
@@ -80,8 +150,21 @@ def match_all(runsetup, products, mapping):
             length_unmapped=length_unmapped,
         )
         out.append((row, ms))
+        for p in ms:
+            predicted[p.instance_id] = p
 
-    return out, width_unmapped, length_unmapped
+    # v0.8 post-passes
+    apply_multi_destination_union(
+        runsetup.lumber_rows, products, runsetup.species, mapping, predicted
+    )
+    apply_auto_activate(
+        {r.thick for r in runsetup.lumber_rows},
+        products,
+        runsetup.species,
+        mapping,
+        predicted,
+    )
+    return out, width_unmapped, length_unmapped, predicted
 
 
 if __name__ == "__main__":
@@ -107,9 +190,10 @@ if __name__ == "__main__":
         f"{sum(1 for p in products if p.species == rs.species)} in {rs.species}\n"
     )
 
-    results, w_unmapped, l_unmapped = match_all(rs, products, mapping)
+    results, w_unmapped, l_unmapped, predicted = match_all(rs, products, mapping)
 
     unique = {}
+
     for row, matches in results:
         header = (
             f"{row.destination:8s} {row.thick:5s} {row.grade_code:3s} "
@@ -122,9 +206,19 @@ if __name__ == "__main__":
             unique[p.instance_id] = p.name
         print()
 
+    # Products added by post-passes (auto-activate / multi-destination union)
+    auto_added_ids = set(predicted) - set(unique)
+    if auto_added_ids:
+        print("Post-pass additions (auto-activate / multi-destination union):")
+        for iid in sorted(auto_added_ids):
+            p = predicted[iid]
+            print(f"    [{iid}] {p.name}  <-- post-pass")
+        print()
+
     print("=" * 70)
-    print(f"Unique active products predicted: {len(unique)}")
-    print("Target (from 4/27/26 screenshot):  21")
+    print(f"From row matches:           {len(unique)}")
+    print(f"After v0.8 post-passes:     {len(predicted)}")
+    print("Target (4/27/26 SMA):       21")
     print("=" * 70)
 
     if w_unmapped:

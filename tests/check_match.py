@@ -84,22 +84,24 @@ def main(fixture_dir: Path):
     runsetup = load_runsetup(runsetup_path)
     products = load_products(products_path)
     mapping = load_mapping(mapping_path)
-    results, _w_unmapped, _l_unmapped = match_all(runsetup, products, mapping)
-    matched_products = []
-    for row, matches in results:
-        matched_products.extend(matches)
-    predicted = {product_key(p) for p in matched_products}
+    results, _w_unmapped, _l_unmapped, predicted = match_all(runsetup, products, mapping)
+
+    predicted_keys = {
+        (p.thick, p.grade, p.color, p.width_token, p.length_token)
+        for p in predicted.values()
+    }
 
     if not answer_key_path.exists():
-        print(f" No answer_key.csv at {answer_key_path}")
-        print(f"Predicted {len(predicted)} unique products. Cannot diff.")
+        print(f"No answer_key.csv at {answer_key_path}")
+        print(f"Predicted {len(predicted_keys)} unique products. Cannot diff.")
         return
 
     answer_key = load_answer_key(answer_key_path)
     documented = {k[0] for k in answer_key}
-    pred_in_scope = {p for p in predicted if p[0] in documented}
+
+    pred_in_scope = {p for p in predicted_keys if p[0] in documented}
     correct = pred_in_scope & answer_key
-    extra = pred_in_scope - answer_key
+    extra   = pred_in_scope - answer_key
     missing = answer_key - pred_in_scope
 
     print(f"Fixture:                {fixture_dir.name}")
