@@ -125,14 +125,16 @@ Expected output today: `5 correct · 3 extras · 2 missing`.
 
 | Run Set Up term | Comact grade code(s)                              | Notes                                                  |
 | --------------- | ------------------------------------------------- | ------------------------------------------------------ |
-| **PR** (Prime)  | FAS / FASS / FASB / SEL / SEL SAP                 | FAS1W/FAS2W only when destination explicitly wants 1White. |
-| **1C**          | 1COM OPT / 1COM SAP OPT / 1COMB OPT               | Color drives the variant.                              |
-| **2C**          | 2COM OPT / 2COM SAP OPT                           |                                                        |
-| **3A**          | 3ACOM OPT (SAP / Unsel)                           |                                                        |
+| **PR** (Prime) | `(FAS / FASS / SEL / SEL SAP / FAS OPT) ∩ catalog at this thickness × species`, plus auto_activate blocks for the rest | "Prime" = FAS + SEL combined. Variant scope is **catalog-intersected, not hardcoded**. FASS / SEL SAP gated by SAP+BTR or multi-destination color union. FASB OPT [Unsel] auto-on at HMW [8/4, 10/4, 12/4, 16/4]. FAS OPT [Unsel] auto-on at HMW [4/4, 6/4]. FAS1W / FAS2W auto-on at 8/4 HMW. See `mapping.yaml` for the authoritative list. |
+| **1C** | `(1COM OPT, 1COM SAP OPT, 1COMB OPT) ∩ catalog at this thickness × species` | Color drives the variant. **Multi-destination color union** applies: when ≥2 destinations at the same thick/grade specify different colors (UNSEL + SAP+BTR), all color variants in catalog activate. `1COMB OPT` is the brown variant — present in catalog at 4/4 + 5/4 only. |
+| **2C** | `(2COM OPT, 2COM SAP OPT) ∩ catalog at this thickness × species` | Same multi-destination color union as 1C. **Open: ** at HMW 4/4 the operator runs `2COM OPT Unsel` even when only a SAP+BTR 2C row exists in the RSU (asymmetric vs 1C). May become a `2COM OPT [Unsel]` auto_activate rule once a 3rd HMW fixture confirms. |
+| **3A** | `3ACOM OPT (SAP / Unsel) ∩ catalog at this thickness × species` — **auto-activated**, no RSU row required | 3ACOM activates per-thickness from the catalog regardless of whether the Run Set Up has a 3A destination row. Operator treats it as a downgrade-flow grade. Verified across SMA 8/4 (Unsel only) + HMW 4/4 / 6/4 / 8/4. |
 | **3B / Pallet** | 3B OPT                                            | Brown 1&2COM dumps here per the Prolam note.           |
-| **SG**          | SUBG + 3B + WORMY + WORMY MARK + 1COMB            | Prolam catch-all when Run Set Up says "all 3b — all sound pallet — all brown 1&2com here". |
-| Color UNSEL     | grade × thickness × species dependent (see below) | NOT "all colors" — see open mysteries.                 |
+| **SG** | `(SUBG OPT, 3B OPT, WORMY ?, WORMY MARK ?, 1COMB OPT) ∩ catalog at this thickness × species` | Prolam catch-all driven by the Run Set Up note "all 3b — all sound pallet — all brown 1&2com here". Future runs without that note may need a narrower SG (e.g. SUBG-only). WORMY/WORMY MARK auto-activation is provisional pending a 3rd species fixture with WORMY in catalog. |
+| Color UNSEL | grade × thickness × species dependent — **NOT** "all colors" | Operator picks the natural color flavor of each grade × thickness × species. Examples: PR UNSEL @ 8/4 SMA → SAP only (no FASB Unsel); 1C/2C UNSEL @ 8/4 SMA → Unsel only (no SAP). No static `color_map.UNSEL` captures this — encoded as per-grade-per-thickness-per-species rules in `mapping.yaml` and grown one fixture at a time. |
 | Color SAP+BTR   | `SAP` suffix only                                 | At least one sap face.                                 |
+| Min Width X" | Width token band (`RandomW`, `Rw > 5`, `Rw SEL`, `Rw 5-8`, etc.) | Pick all width bands whose min ≥ row.min_width. Width tokens are bin descriptors, not row filters — physical board width routes to whichever active bin matches. |
+| Length min/max | Length token (`RandomL +3"`, `Sel 6`, `6-7'`) | `Sel 6` = 6' selects only; `RandomL +3"` = 7'+; specific bands for 6-7'. |
 
 ## Catalog facts (`allproducts.xml`, Wagner_20250806)
 
