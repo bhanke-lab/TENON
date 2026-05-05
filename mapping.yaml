@@ -1,6 +1,22 @@
-# mapping.yaml v0.8 — Run Set Up codes → Comact grade/color/auto rules.
-# Validated against fixtures: sma_2026-04-27, hmw_2026-05-04.
-# All translation rules live here; never bury them in code..
+# mapping.yaml
+# Translates Run Set Up grade/color codes to Comact catalog grade/color codes.
+# All translation rules live here as data, not code.
+#
+# Version: v0.9 (LOCKED 2026-05-05)
+# Stage 1 status: HMW 24/0/1 (recall 96%, precision 100%) · SMA 6/3/1 (recall 86%, precision 67%)
+#
+# Changelog
+#   v0.9 — Add auto_activate FAS OPT [Unsel] at HMW [4/4, 6/4]. Companion to the
+#          AllProducts.xml live-patch that added the 2 missing FAS OPT Unsel HMW
+#          entries (instanceIds 99000000000000001, 99000000000000002).
+#   v0.8 — Move FASS OPT + SEL SAP OPT out of grade_map.PR into auto_activate@8/4
+#          for SMA + HMW (was overshooting at 4/4 + 6/4 HMW).
+#          3ACOM auto-activation per thickness × species (catalog-intersected).
+#          Multi-destination color union for PR / 1C / 2C.
+#          FASB OPT [Unsel] auto_activate scoped to HMW [8/4, 10/4, 12/4, 16/4].
+#          FAS1W / FAS2W auto-on at 8/4 HMW (catalog-gated).
+#   v0.7 — Drop FAS1W / FAS2W / FASB from grade_map.PR (per 8/4 SMA ground truth).
+#          Baseline diff harness validated against fixtures/sma_2026-04-27.
 
 grade_map:
   PR:   [SEL OPT]            # ← was [FAS OPT, FASS OPT, SEL OPT, SEL SAP OPT]
