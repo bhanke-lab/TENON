@@ -2080,6 +2080,30 @@
     <priority>0</priority>
   </Board>
   <Board>
+	<instanceId>99000000000000001</instanceId>
+	<historicalId>99000000000000001</historicalId>
+	<name>4/4 x Rw &gt; 5 x RandomL +3" FAS OPT Unsel HMW</name>
+	<thick>4/4</thick>
+	<width>Rw &gt; 5</width>
+	<length>RandomL +3"</length>
+	<grade>FAS OPT</grade>
+	<price>4.0</price>
+	<volumePrice>1600.0</volumePrice>
+	1.0 1.0 1.0 1.0 1.0 3.0 10.0 10.0 0
+</Board>
+<Board>
+	<instanceId>99000000000000002</instanceId>
+	<historicalId>99000000000000002</historicalId>
+	<name>6/4 x Rw &gt; 5 x RandomL +3" FAS OPT Unsel HMW</name>
+	<thick>6/4</thick>
+	<width>Rw &gt; 5</width>
+	<length>RandomL +3"</length>
+	<grade>FAS OPT</grade>
+	<price>4.5</price>
+	<volumePrice>1800.0</volumePrice>
+	1.0 1.0 1.0 1.0 1.0 3.0 10.0 10.0 0
+</Board>
+  <Board>
     <instanceId>17737888025271420</instanceId>
     <historicalId>17737888025471423</historicalId>
     <name>4/4 x Rw &gt; 5 x RandomL +3&quot; FASB OPT Unsel ASH</name>
