@@ -2,13 +2,20 @@
 # Translates Run Set Up grade/color codes to Comact catalog grade/color codes.
 # All translation rules live here as data, not code.
 #
-# Version: v0.9 (LOCKED 2026-05-05)
-# Stage 1 status: HMW 24/0/1 (recall 96%, precision 100%) · SMA 6/3/1 (recall 86%, precision 67%)
+# Version: v0.9.1 (LOCKED 2026-05-06)
+# Stage 1 status: HMW 21/0/5 (recall 81%, precision 100%) · SMA 6/3/1 (recall 86%, precision 67%) · BIRCH 5/0/1 (recall 83%, precision 100%)
 #
 # Changelog
-#   v0.9 — Add auto_activate FAS OPT [Unsel] at HMW [4/4, 6/4]. Companion to the
-#          AllProducts.xml live-patch that added the 2 missing FAS OPT Unsel HMW
-#          entries (instanceIds 99000000000000001, 99000000000000002).
+#  v0.9.1— Remove dead FAS OPT [Unsel] HMW [4/4, 6/4] auto_activate block.
+#          Catalog has zero FAS OPT × HMW products at any thickness, so the
+#          rule was firing against an empty catalog intersection and
+#          activating nothing. The 2 phantom catalog entries that v0.9
+#          depended on (instanceIds 99000000000000001/2) were operator-added
+#          by mistake at the live UI on Mon 5/4 PM and deactivated 5/6 AM.
+#          Companion catalog refresh: dropped 5/4 XML + repointed every
+#          fixture's catalog.txt to allproducts_2026-05-06.xml.
+#  v0.9  — RETRACTED. Catalog patch + auto_activate were both based on a
+#          misread of operator-transient UI state, not a real catalog gap.
 #   v0.8 — Move FASS OPT + SEL SAP OPT out of grade_map.PR into auto_activate@8/4
 #          for SMA + HMW (was overshooting at 4/4 + 6/4 HMW).
 #          3ACOM auto-activation per thickness × species (catalog-intersected).
@@ -42,13 +49,6 @@ auto_activate:
     colors: [SAP]
     species: [SMA, HMW]
     thicknesses: ["8/4"]
-
-  # NEW: Unsel-flavor FAS at thin HMW thicknesses, where SAP+BTR-only PR rows
-  # still need a heart-faced bin and FAS OPT Unsel is the only PR catalog entry
-  - grade: FAS OPT
-    colors: [Unsel]
-    species: [HMW]
-    thicknesses: ["4/4", "6/4"]
 
   - grade: FAS1W OPT
     colors: [1White]
