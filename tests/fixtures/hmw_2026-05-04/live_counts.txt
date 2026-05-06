@@ -1,1 +1,1 @@
-[HMW] active=25 available=35 total=60
+[HMW] active=26 available=32 total=58
