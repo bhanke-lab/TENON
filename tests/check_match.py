@@ -58,6 +58,20 @@ def product_key(p):
 
 
 def main(fixture_dir: Path):
+    # Pre-check: confirm the fixture dir exists before any file reads.
+    # A typo'd fixture name otherwise dies with FileNotFoundError on
+    # runsetup.csv several layers down, which doesn't tell the operator
+    # whether they typo'd the name or the fixture is malformed.
+    if not fixture_dir.exists():
+        fixtures_root = ROOT / "tests" / "fixtures"
+        available = sorted(
+            d.name for d in fixtures_root.iterdir()
+            if d.is_dir() and d.name != "_catalogs"
+        )
+        msg = [f"Fixture not found: {fixture_dir}", "", "Available fixtures:"]
+        msg.extend(f"  {name}" for name in available)
+        sys.exit("\n".join(msg))
+
     runsetup_path = fixture_dir / "runsetup.csv"
     answer_key_path = fixture_dir / "answer_key.csv"
     mapping_path = ROOT / "mapping.yaml"
