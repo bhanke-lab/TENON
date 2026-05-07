@@ -1,0 +1,7 @@
+# Per-species live counts captured at the Comact.
+# Format: [<SPECIES>] active=<N> available=<N> total=<N>
+# Numbers come from the bottom-of-pane counts when the species filter is set.
+# Append a real line below at capture time (or delete this file if skipped).
+# Example: [CHERRY] active=25 available=35 total=60
+
+[CHERRY] active=16 available=41 total=57
