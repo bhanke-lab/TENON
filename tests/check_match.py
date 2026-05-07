@@ -180,7 +180,7 @@ def main(fixture_dir: Path):
     print(f"Predicted (in scope):   {len(pred_in_scope)}")
     print(f"  ✓ Correct:      {len(correct)}")
     print(f"  ✗ Extra:        {len(extra)} (predicted but NOT active)")
-    print(f"  ✗ Missing-rule: {len(missing)} (active but NOT predicted; catalog gaps already exit above)")
+    print(f"  ? Missing-rule: {len(missing)} (active but NOT predicted; investigate for new rule or operator override)")
     print()
 
     def dump(label, s):
@@ -192,7 +192,7 @@ def main(fixture_dir: Path):
         print()
 
     dump("EXTRA (false positives)", extra)
-    dump("MISSING-RULE (false negatives —  gaps caught by pre-flight)", missing)
+    dump("MISSING-RULE (active but no rule coverage; investigate for new rule or operator override)", missing)
     if not extra and not missing:
         print(" Perfect match across documented thicknesses.")
 
