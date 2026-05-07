@@ -100,13 +100,18 @@ def main(fixture_dir: Path):
     answer_key = load_answer_key(answer_key_path)
 
     # Pre-flight: catch catalog gaps before bucketing predictions.
-    # If the answer key references products that don't exist in the catalog,
-    # no amount of rule tuning will close the gap — the catalog itself needs
-    # updating (re-pull AllProducts.xml or hand-add the missing entries).
-    # Reports as a distinct failure mode (exit 2) instead of being silently
-    # bucketed into "MISSING (false negatives)" — that conflation is what
-    # cost ~5 turns of diagnosis on the FAS OPT Unsel HMW gap (2026-05-05).
-    catalog_keys = {product_key(p) for p in products}
+    # If the answer key references products that don't exist in the catalog
+    # FOR THIS RUN'S SPECIES, no amount of rule tuning will close the gap —
+    # the catalog itself needs updating (re-pull AllProducts.xml or hand-add
+    # the missing entries). Reports as a distinct failure mode (exit 2)
+    # instead of being silently bucketed into "MISSING (false negatives)" —
+    # that conflation is what cost ~5 turns of diagnosis on the FAS OPT
+    # Unsel HMW gap (2026-05-05).
+    #
+    # Species-scoped: a cherry answer key entry that happens to match an HMW
+    # product's (thick, grade, color, w, l) tuple is still a cherry catalog
+    # gap. Without the species filter the cross-species shadow hides it.
+    catalog_keys = {product_key(p) for p in products if p.species == runsetup.species}
     catalog_gaps = answer_key - catalog_keys
     if catalog_gaps:
         print("⚠️  CATALOG GAP — answer key contains products not in catalog:")
