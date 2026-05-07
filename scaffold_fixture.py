@@ -105,6 +105,26 @@ def scaffold(species: str, iso_date: str, repo_root: Path) -> Path:
         encoding="utf-8",
     )
 
+    # catalog.txt — auto-seed with the latest catalog filename in _catalogs/.
+    # Same lex-max logic as parse_products / dump_catalog default behavior.
+    # Self-updating: drop a newer allproducts_*.xml into _catalogs/ and the
+    # next scaffolded fixture picks it up automatically. If no catalogs exist
+    # yet, warn loudly and skip seeding (operator must hand-write catalog.txt
+    # before check_match.py will find a catalog).
+    catalogs_dir = repo_root / "tests" / "fixtures" / "_catalogs"
+    candidates = sorted(catalogs_dir.glob("allproducts_*.xml"))
+    if candidates:
+        latest_catalog = candidates[-1].name
+        (fixture_dir / "catalog.txt").write_text(latest_catalog, encoding="utf-8")
+        print(f"  ✓ Seeded catalog.txt → {latest_catalog}")
+    else:
+        print(
+            f"  ⚠ No allproducts_*.xml found in tests/fixtures/_catalogs/ — "
+            f"catalog.txt NOT seeded. Drop a catalog there and write its "
+            f"filename into catalog.txt manually before running check_match.",
+            file=sys.stderr,
+        )
+
     # README.md stub — reminds you what goes where, in case you forget.
     readme = fixture_dir / "README.md"
     readme.write_text(
@@ -113,12 +133,16 @@ def scaffold(species: str, iso_date: str, repo_root: Path) -> Path:
         f"## Drop here\n"
         f"- `runsetup.xlsx` — original email attachment\n"
         f"- `runsetup.csv` — Save As CSV from the .xlsx\n"
-        f"- `allproducts.xml` — only if catalog refreshed since last fixture\n"
         f"- `screenshots/<thick>_active.jpg` — Active Products, per thickness\n"
         f"- `screenshots/<thick>_available.jpg` — Available Products, per thickness\n"
         f"- `notes/<thick>.m4a` — voice memo if a deselect was non-obvious\n"
         f"- `live_counts.txt` — append `[<SPECIES>] active=N available=N total=N` from\n"
         f"  the bottom-of-pane counts at the Comact (template pre-seeded)\n"
+        f"\n"
+        f"## Auto-seeded\n"
+        f"- `catalog.txt` — points at the latest `_catalogs/allproducts_*.xml`.\n"
+        f"  If the catalog is refreshed mid-fixture, edit this manually to point\n"
+        f"  at the new filename (or re-scaffold).\n"
         f"\n"
         f"Then transcribe screenshots into `answer_key.csv` and run:\n"
         f"```\n"
