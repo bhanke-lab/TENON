@@ -23,6 +23,7 @@ SPECIES_MAP = {
     "Ash": "ASH",
     "Walnut": "WALNUT",
     "Tulip": "TUL",
+    "Poplar": "TUL",
     "Yellow Poplar": "TUL",
     "Basswood": "BASSWOOD",
     "Birch": "BIRCH",
