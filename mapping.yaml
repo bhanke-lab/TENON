@@ -2,10 +2,25 @@
 # Translates Run Set Up grade/color codes to Comact catalog grade/color codes.
 # All translation rules live here as data, not code.
 #
-# Version: v0.10.1 (2026-05-07)
-# Stage 1 status: HMW 21/0/5 · SMA 6/3/1 · BIRCH 6/0/0 · ASH 13/0/2 · CHERRY 15/0/1 · TUL 7/1/0 · ROK 21/0/0 
+# Version: v0.11 (2026-05-13)
+# Stage 1 status (projected, pending suite re-run):
+#   HMW 24/0/2 · SMA 6/3/1 · BIRCH 6/0/0 · ASH 13/0/2 ·
+#   CHERRY 15/0/1 · TUL 7/1/0 · ROK 21/0/0 · SMA-2 19/2/2
 #
 # Changelog
+# v0.11 — Revert Fix B's 8/4-only scope; auto_activate FASS OPT [SAP] + SEL SAP OPT [SAP]
+#         per species×thickness cell.
+#         SMA: all observed thicknesses (catalog-intersected).
+#         HMW: [4/4, 5/4, 8/4]; HMW 6/4 explicitly excluded (operator deselects despite
+#         catalog presence — confirmed 2026-05-13 against hmw_2026-05-04 AK).
+#         Add WORMY ["?"] auto_activate at SMA [4/4, 5/4, 6/4, 8/4]
+#         (SMA-2 + SMA-1 evidence; 2 fixtures, 3 thickness cells). 10/4 excluded
+#         per 5/11 fixture (catalog has WORMY × SMA × 10/4 but operator deselects).
+#         Narrow 3ACOM OPT auto_activate from ANY thickness to [4/4, 5/4, 6/4, 8/4]
+#         (SMA-2 evidence at 10/4; closes 1 extra at SMA-2). TUL 8/4 3ACOM extra
+#         unchanged — single-fixture, deferred.
+#         Fix grade_map.SG: 'WORMY OPT' → 'WORMY' (catalog name); remove 'WORMY MARK OPT'
+#         (operator never activates; 3-cell evidence across 2 SMA fixtures).
 #v0.10.1 — Add FAS STAIN ["?"] auto_activate at ROK [4/4] (ROK fixture evidence; 1 data point).
 #          Closes rok_2026-05-07 to 21/21.
 #  v0.10 — Add FAS OPT to grade_map.PR (BIRCH/ASH/TUL evidence; 6 data points).
@@ -38,30 +53,21 @@ grade_map:
   "1C": [1COM OPT, 1COM SAP OPT, 1COMB OPT]
   "2C": [2COM OPT, 2COM SAP OPT]
   "3C": [3ACOM OPT]
-  SG:   [SUBG OPT, 3B OPT, 1COMB OPT, WORMY OPT, WORMY MARK OPT]
+  SG: [SUBG OPT, 3B OPT, 1COMB OPT, WORMY]
   "3B": [3B OPT]
 
 auto_activate:
   - grade: 3ACOM OPT
     colors: [SAP, Unsel, "?"]
     species: ANY
-    thicknesses: ANY
+    thicknesses: [4/4, 5/4, 6/4, 8/4]
 
-  - grade: 3B OPT
+  - grade: WORMY
     colors: ["?"]
-    species: ANY
-    thicknesses: ["4/4", "5/4"]
+    species: [SMA]
+    thicknesses: [4/4, 5/4, 6/4, 8/4]
 
-  # NEW: FASS OPT + SEL SAP OPT only fire at 8/4, where multi-dest union is real
-  - grade: FASS OPT
-    colors: [SAP]
-    species: [SMA, HMW]
-    thicknesses: ["8/4"]
-  - grade: SEL SAP OPT
-    colors: [SAP]
-    species: [SMA, HMW]
-    thicknesses: ["8/4"]
-
+    # === FAS1W / FAS2W HMW 8/4 (restored from v0.8; accidentally dropped in v0.11 draft) ===
   - grade: FAS1W OPT
     colors: [1White]
     species: [HMW]
@@ -70,6 +76,31 @@ auto_activate:
     colors: [1White]
     species: [HMW]
     thicknesses: ["8/4"]
+
+  - grade: 3B OPT
+    colors: ["?"]
+    species: ANY
+    thicknesses: ["4/4", "5/4"]
+
+   # === SMA PR-SAP family (replaces Fix B's 8/4 SMA block) ===
+  - grade: FASS OPT
+    colors: [SAP]
+    species: [SMA]
+    thicknesses: ANY              # catalog has FASS @ 4/4, 5/4, 6/4, 8/4, 10/4, 12/4, 16/4
+  - grade: SEL SAP OPT
+    colors: [SAP]
+    species: [SMA]
+    thicknesses: ANY              # catalog has SEL SAP @ 4/4, 5/4, 6/4, 8/4
+
+  # === HMW PR-SAP family (replaces Fix B's 8/4 HMW block; 6/4 explicitly skipped) ===
+  - grade: FASS OPT
+    colors: [SAP]
+    species: [HMW]
+    thicknesses: [4/4, 5/4, 8/4]  # HMW 6/4 deselected per fixture
+  - grade: SEL SAP OPT
+    colors: [SAP]
+    species: [HMW]
+    thicknesses: [4/4, 5/4, 8/4]  # HMW 6/4 deselected per fixture
 
   - grade: FASB OPT
     colors: [Unsel]
