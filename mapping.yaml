@@ -2,13 +2,28 @@
 # Translates Run Set Up grade/color codes to Comact catalog grade/color codes.
 # All translation rules live here as data, not code.
 #
-# Version: v0.11 (2026-05-13)
-# Stage 1 status (v0.11 locked, 2026-05-13):
-#   HMW 24/0/2 · SMA-1 7/3/0 · BIRCH 6/0/0 · ASH 13/0/2 ·
-#   CHERRY 15/0/1 · TUL 7/1/0 · ROK 21/0/0 · SMA-2 19/2/2
-#   Cumulative: 112/6/7 (recall 94.1%, precision 94.9%)
+# Version: v0.12 (2026-05-14)
+# Stage 1 status (v0.12, 2026-05-14):
+#   ASH-1 13/0/2 · ASH-2 14/0/1 · BIRCH 6/0/0 · CHERRY 15/0/1 ·
+#   HMW 24/0/2 · ROK 21/0/0 · SMA-1 7/3/0 · SMA-2 19/2/2 ·
+#   TUL 7/1/0 · WALNUT 7/2/0 · WOK 22/2/0
+#   Cumulative: 155/10/8 (recall 95.1%, precision 93.9%)
 #
 # Changelog
+# v0.12 — Add grade_map.CHR (CHAR/FAS/SEL/1COM/2COM OPT) per WOK fixture
+#         evidence: closes WOK 6 missings, introduces 2 catalog-present
+#         operator-deselect extras at 4/4 (CHAR OPT ? Rw>8 and FAS OPT
+#         Unsel Rw>6). Net WOK: 16/0/6 → 22/2/0. CHR scope intentionally
+#         broad to cover all 5 grades; 4/4 deselect noise is documented,
+#         same pattern as SMA-1's 8/4 SAP extras. Add 12/4 FASS OPT SAP
+#         ASH auto_activate (confidence: provisional) to cover catalog
+#         entry added 2026-05-13 by Nate; ASH-only scope (not CHERRY)
+#         pending operator re-confirm. WALNUT PR→SEL exclusion deferred
+#         to v0.13 (needs grade_map_species_exclude support in match.py);
+#         walnut_2026-05-13 stays at 7/2/0 for now.
+#         Open question: is 12/4 FASS OPT SAP ASH permanent or
+#         experimental? Also evaluating cants→2COM rule (ASH-2 8/4 2COM
+#         OPT is operator-add; single-fixture, deferred).
 # v0.11 — Revert Fix B's 8/4-only scope; auto_activate FASS OPT [SAP] + SEL SAP OPT [SAP]
 #         per species×thickness cell.
 #         SMA: all observed thicknesses (catalog-intersected).
@@ -54,8 +69,9 @@ grade_map:
   "1C": [1COM OPT, 1COM SAP OPT, 1COMB OPT]
   "2C": [2COM OPT, 2COM SAP OPT]
   "3C": [3ACOM OPT]
-  SG: [SUBG OPT, 3B OPT, 1COMB OPT, WORMY]
+  SG:   [SUBG OPT, 3B OPT, 1COMB OPT, WORMY]
   "3B": [3B OPT]
+  CHR:  [CHAR OPT, FAS OPT, SEL OPT, 1COM OPT, 2COM OPT]
 
 auto_activate:
   - grade: 3ACOM OPT
@@ -113,6 +129,16 @@ auto_activate:
     colors: ["?"]
     species: [ROK]
     thicknesses: ["4/4"]
+  
+  # === 12/4 FASS OPT SAP ASH (catalog drift, added by Nate 2026-05-13) ===
+  - grade: FASS OPT
+    colors: [SAP]
+    species: [ASH]
+    thicknesses: ["12/4"]
+    confidence: provisional
+    # Catalog entry added 2026-05-13 (Nate, pre-confirm).
+    # ASH-only scope; do NOT extend to CHERRY without re-confirmation.
+    # Remove this block + the catalog entry if reverted.
 
 color_map:
   UNSEL:    [Unsel, "?", SAP, 1White]
