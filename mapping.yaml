@@ -2,14 +2,31 @@
 # Translates Run Set Up grade/color codes to Comact catalog grade/color codes.
 # All translation rules live here as data, not code.
 #
-# Version: v0.12 (2026-05-14)
-# Stage 1 status (v0.12, 2026-05-14):
-#   ASH-1 13/0/2 · ASH-2 14/0/1 · BIRCH 6/0/0 · CHERRY 15/0/1 ·
-#   HMW 24/0/2 · ROK 21/0/0 · SMA-1 7/3/0 · SMA-2 19/2/2 ·
-#   TUL 7/1/0 · WALNUT 7/2/0 · WOK 22/2/0
-#   Cumulative: 155/10/8 (recall 95.1%, precision 93.9%)
+# Version: v0.14 (2026-05-18)
+# Stage 1 status (v0.14, 2026-05-18):
+#   ASH-1 14/0/1 · ASH-2 15/0/0 · BIRCH 6/0/0 · CHERRY 15/0/1 ·
+#   HMW-1 26/0/0 · HMW-2 21/3/6 · ROK-1 21/0/0 · ROK-2 15/1/0 ·
+#   SMA-1 7/3/0 · SMA-2 21/2/0 · TUL 7/1/0 · WALNUT 7/2/0 · WOK 22/2/0
+#   Cumulative: 197/14/8 (recall 96.1%, precision 93.4%)
 #
 # Changelog
+# v0.14 — ASH 8/4 commons-Unsel auto_activate
+#         Evidence: ash_2026-05-06 8/4 2COM OPT Unsel + ash_2026-05-13 8/4 2COM OPT Unsel.
+#         2 cells across 2 fixtures, same species. Operator activates 2COM Unsel
+#         at 8/4 ASH even when only a SAP+BTR 2C row drives the bin.
+#         Closes 2 missings: ASH-1 to 14/0/1, ASH-2 to 15/0/0 (perfect).
+#         Investigated and rejected: 12/4 PR auto-activation. Both ash_2026-05-06
+#         and cherry_2026-05-07 have driving 12/4 PR Lumber rows whose color
+#         filter (SAP+BTR / "90/50") excludes the catalog's actual PR variant
+#         at 12/4; operator activates the catalog product anyway. ASH-1 has
+#         FAS OPT Unsel active at 12/4 but ash_2026-05-13's AK does NOT —
+#         pattern is operator-add at ASH-1 only, single fixture per species.
+#         Held as note, not v0.15 candidate. Re-evaluate on next ASH/CHERRY 12/4 fixture.
+# v0.13 — 4/4 commons-Unsel auto_activate
+#         Evidence: HMW-1 4/4 1COM Unsel + 2COM Unsel; HMW-2 4/4 1COM Unsel + 2COM Unsel;
+#         SMA-2 4/4 1COM Unsel + 2COM Unsel. 6 cells across 2 species at 4/4.
+#         Operator auto-activates Unsel commons at 4/4 even when only SAP+BTR rows
+#         drive the bin. Catalog-intersection in match.py gates other species.
 # v0.12 — Add grade_map.CHR (CHAR/FAS/SEL/1COM/2COM OPT) per WOK fixture
 #         evidence: closes WOK 6 missings, introduces 2 catalog-present
 #         operator-deselect extras at 4/4 (CHAR OPT ? Rw>8 and FAS OPT
@@ -139,6 +156,22 @@ auto_activate:
     # Catalog entry added 2026-05-13 (Nate, pre-confirm).
     # ASH-only scope; do NOT extend to CHERRY without re-confirmation.
     # Remove this block + the catalog entry if reverted.
+
+  # === ASH 8/4 commons-Unsel auto_activate (v0.14) ===
+  - grade: 2COM OPT
+    colors: [Unsel]
+    species: [ASH]
+    thicknesses: ["8/4"]
+
+  # === 4/4 commons-Unsel auto_activate
+  - grade: 1COM OPT
+    colors: [Unsel]
+    species: [HMW, SMA]
+    thicknesses: ["4/4"]
+  - grade: 2COM OPT
+    colors: [Unsel]
+    species: [HMW, SMA]
+    thicknesses: ["4/4"]
 
 color_map:
   UNSEL:    [Unsel, "?", SAP, 1White]
