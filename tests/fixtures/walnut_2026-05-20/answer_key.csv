@@ -1,0 +1,8 @@
+thick,grade,color,width_token,length_token
+4/4,FAS OPT,Unsel,Rw > 5,RandomL +3"
+4/4,1COM OPT,Unsel,RandomW,RandomL +3"
+4/4,2COM OPT,Unsel,RandomW,RandomL +3"
+4/4,3ACOM OPT,?,RandomW,RandomL +3"
+8/4,FAS OPT,Unsel,Rw > 5,RandomL +3"
+8/4,1COM OPT,Unsel,RandomW,RandomL +3"
+8/4,2COM OPT,Unsel,RandomW,RandomL +3"
