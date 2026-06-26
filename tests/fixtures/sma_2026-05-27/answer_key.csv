@@ -1,0 +1,28 @@
+thick,grade,color,width_token,length_token
+4/4,FASS OPT,SAP,Rw > 5,"RandomL +3"""
+4/4,SEL SAP OPT,SAP,RandomW,Sel 6
+4/4,SEL SAP OPT,SAP,Rw SEL,"RandomL +3"""
+4/4,1COM SAP OPT,SAP,RandomW,"RandomL +3"""
+4/4,1COM OPT,Unsel,RandomW,"RandomL +3"""
+4/4,2COM SAP OPT,SAP,RandomW,"RandomL +3"""
+4/4,2COM OPT,Unsel,RandomW,"RandomL +3"""
+4/4,1COMB OPT,Unsel,RandomW,"RandomL +3"""
+4/4,3ACOM OPT,SAP,RandomW,"RandomL +3"""
+4/4,3ACOM OPT,Unsel,RandomW,"RandomL +3"""
+4/4,WORMY,?,RandomW,"RandomL +3"""
+4/4,SUBG OPT,?,RandomW,"RandomL +3"""
+4/4,3B OPT,?,RandomW,"RandomL +3"""
+6/4,FASS OPT,SAP,Rw > 5,"RandomL +3"""
+6/4,SEL SAP OPT,SAP,RandomW,Sel 6
+6/4,SEL SAP OPT,SAP,Rw SEL,"RandomL +3"""
+6/4,1COM OPT,Unsel,RandomW,"RandomL +3"""
+6/4,2COM OPT,Unsel,RandomW,"RandomL +3"""
+6/4,3ACOM OPT,Unsel,RandomW,"RandomL +3"""
+6/4,WORMY,?,RandomW,"RandomL +3"""
+8/4,FASS OPT,SAP,Rw > 5,"RandomL +3"""
+8/4,SEL SAP OPT,SAP,RandomW,Sel 6
+8/4,SEL SAP OPT,SAP,Rw SEL,"RandomL +3"""
+8/4,1COM OPT,Unsel,RandomW,"RandomL +3"""
+8/4,2COM OPT,Unsel,RandomW,"RandomL +3"""
+8/4,3ACOM OPT,Unsel,RandomW,"RandomL +3"""
+8/4,WORMY,?,RandomW,"RandomL +3"""
