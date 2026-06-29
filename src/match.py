@@ -30,6 +30,12 @@ def match_for_row(row, products, run_species, mapping,
     confirm semantics against a labeled fixture.
     """
     allowed_grades = set(mapping["grade_map"].get(row.grade_code, []))
+    # v0.15: species-specific grade exclusions. Some species never take a
+    # destination the base grade_map lists (e.g. WALNUT PR -> never SEL OPT).
+    for ex in (mapping.get("grade_map_species_exclude", {})
+               .get(row.grade_code, {})
+               .get(run_species, [])):
+        allowed_grades.discard(ex)
     allowed_colors = set(mapping["color_map"].get(row.color_code, []))
     width_tokens = mapping["width_tokens"]
     length_tokens = mapping["length_tokens"]
@@ -80,6 +86,12 @@ def apply_multi_destination_union(rows, products, run_species, mapping, predicte
         if len(colors) <= 1:
             continue
         allowed_grades = set(mapping["grade_map"].get(grade_code, []))
+        # v0.15: honor species-specific grade exclusions here too, so the
+        # union post-pass can't re-add an excluded destination (WALNUT SEL OPT).
+        for ex in (mapping.get("grade_map_species_exclude", {})
+                   .get(grade_code, {})
+                   .get(run_species, [])):
+            allowed_grades.discard(ex)
         for p in products:
             if p.species != run_species:
                 continue
@@ -103,6 +115,10 @@ def apply_auto_activate(thicks_in_runsetup, products, run_species, mapping, pred
     for rule in mapping.get("auto_activate", []):
         species_scope = rule.get("species", "ANY")
         if species_scope != "ANY" and run_species not in species_scope:
+            continue
+        # v0.15: per-rule species blocklist, so an ANY rule can skip species
+        # that deselect (e.g. TUL / BASSWOOD never auto-take 6/4 3ACOM).
+        if run_species in rule.get("exclude_species", []):
             continue
         thick_scope = rule.get("thicknesses", "ANY")
         if thick_scope == "ANY":

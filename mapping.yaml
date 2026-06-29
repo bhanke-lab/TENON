@@ -2,14 +2,28 @@
 # Translates Run Set Up grade/color codes to Comact catalog grade/color codes.
 # All translation rules live here as data, not code.
 #
-# Version: v0.14 (2026-05-18)
-# Stage 1 status (v0.14, 2026-05-18):
-#   ASH-1 14/0/1 · ASH-2 15/0/0 · BIRCH 6/0/0 · CHERRY 15/0/1 ·
-#   HMW-1 26/0/0 · HMW-2 21/3/6 · ROK-1 21/0/0 · ROK-2 15/1/0 ·
-#   SMA-1 7/3/0 · SMA-2 21/2/0 · TUL 7/1/0 · WALNUT 7/2/0 · WOK 22/2/0
-#   Cumulative: 197/14/8 (recall 96.1%, precision 93.4%)
+# Version: v0.15 (2026-06-29)
+# Stage 1 corpus: 30 fixtures, 10 species. Cumulative 451/33/21 -> recall 95.6% (451/472), precision 93.2% (451/484).
+# v0.15 -- precision pass. Extras cut 47 -> 33 vs v0.14, recall flat (hmw_2026-05-04 stays 26/0/0).
+#   (1) grade_map_species_exclude: WALNUT PR drops SEL OPT.
+#   (2) 3ACOM auto split: 6/4 excludes TUL + BASSWOOD.
+#   (3) color_map.UNSEL drops SAP.
+#   Considered + rejected: retracting the HMW 8/4 FAS2W/FASB autos. hmw_2026-05-04 actively uses both;
+#   retraction regressed HMW-1 to 24/0/2. Kept the autos ON per the ROK FAS STAIN precedent.
 #
 # Changelog
+# v0.15 — Precision pass. 
+#         (1) grade_map_species_exclude: WALNUT PR never takes
+#         SEL OPT (WALNUT-1 + WALNUT-2). 
+#         (2) Split 3ACOM auto; exclude TUL +
+#         BASSWOOD at 6/4 (TUL-2 + BASS-1 + TUL-3); ROK keeps 6/4 (ROK-4).
+#         (3) Drop SAP from color_map.UNSEL (SMA UNSEL->SAP, SMA-3 + SMA-4);
+#         real SAP still covered by SAP+BTR rows + FASS/SEL SAP autos. match.py:
+#         added grade_map_species_exclude (match_for_row + union) and per-rule
+#         exclude_species on auto_activate.
+#         Considered + rejected: retracting HMW 8/4 FAS2W/FASB. Active in
+#         hmw_2026-05-04 (operator discretion, same as ROK FAS STAIN), so kept
+#         ON; the HMW-2/3 over-fires are accepted, not retracted.
 # v0.14 — ASH 8/4 commons-Unsel auto_activate
 #         Evidence: ash_2026-05-06 8/4 2COM OPT Unsel + ash_2026-05-13 8/4 2COM OPT Unsel.
 #         2 cells across 2 fixtures, same species. Operator activates 2COM Unsel
@@ -90,18 +104,31 @@ grade_map:
   "3B": [3B OPT]
   CHR:  [CHAR OPT, FAS OPT, SEL OPT, 1COM OPT, 2COM OPT]
 
+# Species that never take a grade_map destination even though the base
+# grade_map lists it. Applied in match_for_row + multi-destination union.
+grade_map_species_exclude:
+  PR:
+    WALNUT: [SEL OPT]   # PR routes to FAS only; operator never activates SEL OPT (WALNUT-1 + WALNUT-2)
+
 auto_activate:
   - grade: 3ACOM OPT
     colors: [SAP, Unsel, "?"]
     species: ANY
-    thicknesses: [4/4, 5/4, 6/4, 8/4]
+    thicknesses: [4/4, 5/4, 8/4]
+  - grade: 3ACOM OPT          # 6/4 split out so TUL / BASSWOOD can be excluded
+    colors: [SAP, Unsel, "?"]
+    species: ANY
+    thicknesses: [6/4]
+    exclude_species: [TUL, BASSWOOD]   # over-fire TUL-2 + BASS-1 + TUL-3; ROK keeps 6/4 (ROK-4)
 
   - grade: WORMY
     colors: ["?"]
     species: [SMA]
     thicknesses: [4/4, 5/4, 6/4, 8/4]
 
-    # === FAS1W / FAS2W HMW 8/4 (restored from v0.8; accidentally dropped in v0.11 draft) ===
+    # === FAS1W / FAS2W HMW 8/4 (operator discretion: active in hmw_2026-05-04,
+    #     deselected in hmw_2026-05-18 / hmw_2026-06-01. Kept ON per the ROK
+    #     FAS STAIN precedent: prefer over-fire over missing an active product.) ===
   - grade: FAS1W OPT
     colors: [1White]
     species: [HMW]
@@ -174,7 +201,7 @@ auto_activate:
     thicknesses: ["4/4"]
 
 color_map:
-  UNSEL:    [Unsel, "?", SAP, 1White]
+  UNSEL:    [Unsel, "?", 1White]   # v0.15: dropped SAP (SMA UNSEL->SAP over-fire, SMA-3 + SMA-4). GATE ON check_all.
   SAP+BTR:  [SAP]
   "12W":    [1White]
   W2F:      [1White]
