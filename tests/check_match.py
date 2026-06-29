@@ -114,10 +114,10 @@ def main(fixture_dir: Path):
 
     # Pre-flight: catch catalog gaps before bucketing predictions.
     # If the answer key references products that don't exist in the catalog
-    # FOR THIS RUN'S SPECIES, no amount of rule tuning will close the gap —
+    # FOR THIS RUN'S SPECIES, no amount of rule tuning will close the gap -
     # the catalog itself needs updating (re-pull AllProducts.xml or hand-add
     # the missing entries). Reports as a distinct failure mode (exit 2)
-    # instead of being silently bucketed into "MISSING (false negatives)" —
+    # instead of being silently bucketed into "MISSING (false negatives)" -
     # that conflation is what cost ~5 turns of diagnosis on the FAS OPT
     # Unsel HMW gap (2026-05-05).
     #
@@ -127,19 +127,19 @@ def main(fixture_dir: Path):
     catalog_keys = {product_key(p) for p in products if p.species == runsetup.species}
     catalog_gaps = answer_key - catalog_keys
     if catalog_gaps:
-        print("⚠️  CATALOG GAP — answer key contains products not in catalog:")
+        print("⚠️  CATALOG GAP - answer key contains products not in catalog:")
         for p in sorted(catalog_gaps):
             print(f"    {p[0]:5} {p[1]:18} {p[2]:6} w={p[3]:18} l={p[4]}")
         print()
         print("Fix the catalog (add to AllProducts.xml or re-pull from the live")
-        print("Comact) before tuning mapping.yaml — rule changes can't conjure")
+        print("Comact) before tuning mapping.yaml - rule changes can't conjure")
         print("products that don't exist in the master catalog.")
         sys.exit(2)
 
     # Cross-check live operator counts (if captured) against catalog counts.
     # The pre-flight above catches catalog gaps surfaced by THIS fixture's
     # answer key. live_counts.txt catches drift for products not in this
-    # answer key but present on the live Comact — e.g., next time Nate
+    # answer key but present on the live Comact - e.g., next time Nate
     # hand-adds something at the UI, the count divergence flags it before
     # the next fixture trips over it. Warning only; doesn't exit.
     live_counts_path = fixture_dir / "live_counts.txt"
@@ -169,7 +169,7 @@ def main(fixture_dir: Path):
             if live_total != catalog_total:
                 drifts.append((species, live_total, catalog_total))
         if drifts:
-            print("⚠️  CATALOG DRIFT — live operator counts disagree with catalog:")
+            print("⚠️  CATALOG DRIFT - live operator counts disagree with catalog:")
             for species, live, cat in drifts:
                 delta = live - cat
                 print(f"    {species}: live={live} catalog={cat} (delta={delta:+d})")
@@ -177,7 +177,7 @@ def main(fixture_dir: Path):
             print("Live = Active+Available counts under the [<SPECIES>] filter")
             print("on the Comact. Catalog = products in the current XML for that")
             print("species. Drift means re-pull AllProducts.xml or hand-patch")
-            print("_catalogs/<latest>.xml. Warning only — diff continues.")
+            print("_catalogs/<latest>.xml. Warning only - diff continues.")
             print()
 
     documented = {k[0] for k in answer_key}

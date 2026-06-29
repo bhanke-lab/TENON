@@ -2,17 +2,29 @@
 # Translates Run Set Up grade/color codes to Comact catalog grade/color codes.
 # All translation rules live here as data, not code.
 #
-# Version: v0.15 (2026-06-29)
-# Stage 1 corpus: 30 fixtures, 10 species. Cumulative 451/33/21 -> recall 95.6% (451/472), precision 93.2% (451/484).
-# v0.15 -- precision pass. Extras cut 47 -> 33 vs v0.14, recall flat (hmw_2026-05-04 stays 26/0/0).
-#   (1) grade_map_species_exclude: WALNUT PR drops SEL OPT.
-#   (2) 3ACOM auto split: 6/4 excludes TUL + BASSWOOD.
-#   (3) color_map.UNSEL drops SAP.
-#   Considered + rejected: retracting the HMW 8/4 FAS2W/FASB autos. hmw_2026-05-04 actively uses both;
-#   retraction regressed HMW-1 to 24/0/2. Kept the autos ON per the ROK FAS STAIN precedent.
+# Version: v0.16 (2026-06-29)
+# Stage 1 corpus: 39 fixtures, 10 species. Cumulative 584/64/32 -> recall 94.8% (584/616), precision 90.1% (584/648).
+# v0.16 - precision pass (caution-first). 2 edits, zero new false positives, -3 extras corpus-wide.
+#   (1) color_map "90/50" -> [Unsel, "?"]: cherry 12/4 FAS9050 (cherry_2026-06-18 13/2/1 -> 14/2/0).
+#   (2) 3ACOM 6/4 auto excludes HMW: over-fires 3-of-4 HMW runs (HMW-2/4/5 off); hmw_2026-05-04's
+#       lone 6/4 3ACOM SAP becomes an operator maybe (25/0/1, no new extra).
+#   Considered + rejected: HMW 6/4 FASS auto. Closes the 6/4 FASS miss on HMW-2/4/5 but adds a
+#   false positive on hmw_2026-05-04 (skipped 6/4 FASS). Caution-first: leave OFF, operator adds.
 #
 # Changelog
-# v0.15 — Precision pass. 
+# v0.16 - Precision pass (caution-first: never auto-select an unwanted product; leave maybes to operator).
+#         (1) color_map "90/50" -> [Unsel, "?"]. Closes cherry 12/4 FAS9050 90/50
+#         (cherry_2026-05-20 + cherry_2026-06-18); cherry_2026-06-18 13/2/1 -> 14/2/0.
+#         (2) Add HMW to the 6/4 3ACOM exclude_species. 6/4 3ACOM SAP over-fires 3-of-4
+#         HMW runs (HMW-2/4/5 deselect; hmw_2026-05-04 alone took it). Suppress to cut 3
+#         false positives; hmw_2026-05-04's 6/4 3ACOM SAP is now an operator maybe
+#         (26/0/0 -> 25/0/1, a missing not an extra). No match.py change.
+#         Considered + rejected: extending the HMW FASS [SAP] auto to 6/4. Closes the 6/4
+#         FASS miss on HMW-2/4/5 but adds a false positive on hmw_2026-05-04 (skipped 6/4
+#         FASS). Recall-chasing that adds a false positive is rejected; 6/4 FASS + SEL SAP
+#         stay [4/4, 5/4, 8/4] = operator maybes.
+#         Corpus vs v0.15: zero new false positives, -3 extras.
+# v0.15 - Precision pass. 
 #         (1) grade_map_species_exclude: WALNUT PR never takes
 #         SEL OPT (WALNUT-1 + WALNUT-2). 
 #         (2) Split 3ACOM auto; exclude TUL +
@@ -24,7 +36,7 @@
 #         Considered + rejected: retracting HMW 8/4 FAS2W/FASB. Active in
 #         hmw_2026-05-04 (operator discretion, same as ROK FAS STAIN), so kept
 #         ON; the HMW-2/3 over-fires are accepted, not retracted.
-# v0.14 — ASH 8/4 commons-Unsel auto_activate
+# v0.14 - ASH 8/4 commons-Unsel auto_activate
 #         Evidence: ash_2026-05-06 8/4 2COM OPT Unsel + ash_2026-05-13 8/4 2COM OPT Unsel.
 #         2 cells across 2 fixtures, same species. Operator activates 2COM Unsel
 #         at 8/4 ASH even when only a SAP+BTR 2C row drives the bin.
@@ -33,15 +45,15 @@
 #         and cherry_2026-05-07 have driving 12/4 PR Lumber rows whose color
 #         filter (SAP+BTR / "90/50") excludes the catalog's actual PR variant
 #         at 12/4; operator activates the catalog product anyway. ASH-1 has
-#         FAS OPT Unsel active at 12/4 but ash_2026-05-13's AK does NOT —
+#         FAS OPT Unsel active at 12/4 but ash_2026-05-13's AK does NOT -
 #         pattern is operator-add at ASH-1 only, single fixture per species.
 #         Held as note, not v0.15 candidate. Re-evaluate on next ASH/CHERRY 12/4 fixture.
-# v0.13 — 4/4 commons-Unsel auto_activate
+# v0.13 - 4/4 commons-Unsel auto_activate
 #         Evidence: HMW-1 4/4 1COM Unsel + 2COM Unsel; HMW-2 4/4 1COM Unsel + 2COM Unsel;
 #         SMA-2 4/4 1COM Unsel + 2COM Unsel. 6 cells across 2 species at 4/4.
 #         Operator auto-activates Unsel commons at 4/4 even when only SAP+BTR rows
 #         drive the bin. Catalog-intersection in match.py gates other species.
-# v0.12 — Add grade_map.CHR (CHAR/FAS/SEL/1COM/2COM OPT) per WOK fixture
+# v0.12 - Add grade_map.CHR (CHAR/FAS/SEL/1COM/2COM OPT) per WOK fixture
 #         evidence: closes WOK 6 missings, introduces 2 catalog-present
 #         operator-deselect extras at 4/4 (CHAR OPT ? Rw>8 and FAS OPT
 #         Unsel Rw>6). Net WOK: 16/0/6 → 22/2/0. CHR scope intentionally
@@ -55,27 +67,27 @@
 #         Open question: is 12/4 FASS OPT SAP ASH permanent or
 #         experimental? Also evaluating cants→2COM rule (ASH-2 8/4 2COM
 #         OPT is operator-add; single-fixture, deferred).
-# v0.11 — Revert Fix B's 8/4-only scope; auto_activate FASS OPT [SAP] + SEL SAP OPT [SAP]
+# v0.11 - Revert Fix B's 8/4-only scope; auto_activate FASS OPT [SAP] + SEL SAP OPT [SAP]
 #         per species×thickness cell.
 #         SMA: all observed thicknesses (catalog-intersected).
 #         HMW: [4/4, 5/4, 8/4]; HMW 6/4 explicitly excluded (operator deselects despite
-#         catalog presence — confirmed 2026-05-13 against hmw_2026-05-04 AK).
+#         catalog presence - confirmed 2026-05-13 against hmw_2026-05-04 AK).
 #         Add WORMY ["?"] auto_activate at SMA [4/4, 5/4, 6/4, 8/4]
 #         (SMA-2 + SMA-1 evidence; 2 fixtures, 3 thickness cells). 10/4 excluded
 #         per 5/11 fixture (catalog has WORMY × SMA × 10/4 but operator deselects).
 #         Narrow 3ACOM OPT auto_activate from ANY thickness to [4/4, 5/4, 6/4, 8/4]
 #         (SMA-2 evidence at 10/4; closes 1 extra at SMA-2). TUL 8/4 3ACOM extra
-#         unchanged — single-fixture, deferred.
+#         unchanged - single-fixture, deferred.
 #         Fix grade_map.SG: 'WORMY OPT' → 'WORMY' (catalog name); remove 'WORMY MARK OPT'
 #         (operator never activates; 3-cell evidence across 2 SMA fixtures).
-#v0.10.1 — Add FAS STAIN ["?"] auto_activate at ROK [4/4] (ROK fixture evidence; 1 data point).
+#v0.10.1 - Add FAS STAIN ["?"] auto_activate at ROK [4/4] (ROK fixture evidence; 1 data point).
 #          Closes rok_2026-05-07 to 21/21.
-#  v0.10 — Add FAS OPT to grade_map.PR (BIRCH/ASH/TUL evidence; 6 data points).
+#  v0.10 - Add FAS OPT to grade_map.PR (BIRCH/ASH/TUL evidence; 6 data points).
 #          Add FAS9050 OPT + FASR OPT to grade_map.PR (CHERRY-only catalog; 5 data points).
 #          Add "?" to 3ACOM auto_activate colors (CHERRY-isolated; closes 2 cherry missings).
 #          Add 3B OPT ["?"] auto_activate at [4/4, 5/4] ANY (SMA/BIRCH/CHERRY/TUL evidence; 4 data points).
 #          Idempotent at HMW (catalog has 3B OPT × HMW × 4/4 × ?, AK has it, current rules already predict it).
-# v0.9.1 — Remove dead FAS OPT [Unsel] HMW [4/4, 6/4] auto_activate block.
+# v0.9.1 - Remove dead FAS OPT [Unsel] HMW [4/4, 6/4] auto_activate block.
 #          Catalog has zero FAS OPT × HMW products at any thickness, so the
 #          rule was firing against an empty catalog intersection and
 #          activating nothing. The 2 phantom catalog entries that v0.9
@@ -83,15 +95,15 @@
 #          by mistake at the live UI on Mon 5/4 PM and deactivated 5/6 AM.
 #          Companion catalog refresh: dropped 5/4 XML + repointed every
 #          fixture's catalog.txt to allproducts_2026-05-06.xml.
-#   v0.9 — RETRACTED. Catalog patch + auto_activate were both based on a
+#   v0.9 - RETRACTED. Catalog patch + auto_activate were both based on a
 #          misread of operator-transient UI state, not a real catalog gap.
-#   v0.8 — Move FASS OPT + SEL SAP OPT out of grade_map.PR into auto_activate@8/4
+#   v0.8 - Move FASS OPT + SEL SAP OPT out of grade_map.PR into auto_activate@8/4
 #          for SMA + HMW (was overshooting at 4/4 + 6/4 HMW).
 #          3ACOM auto-activation per thickness × species (catalog-intersected).
 #          Multi-destination color union for PR / 1C / 2C.
 #          FASB OPT [Unsel] auto_activate scoped to HMW [8/4, 10/4, 12/4, 16/4].
 #          FAS1W / FAS2W auto-on at 8/4 HMW (catalog-gated).
-#   v0.7 — Drop FAS1W / FAS2W / FASB from grade_map.PR (per 8/4 SMA ground truth).
+#   v0.7 - Drop FAS1W / FAS2W / FASB from grade_map.PR (per 8/4 SMA ground truth).
 #          Baseline diff harness validated against fixtures/sma_2026-04-27.
 
 grade_map:
@@ -119,16 +131,16 @@ auto_activate:
     colors: [SAP, Unsel, "?"]
     species: ANY
     thicknesses: [6/4]
-    exclude_species: [TUL, BASSWOOD]   # over-fire TUL-2 + BASS-1 + TUL-3; ROK keeps 6/4 (ROK-4)
+    exclude_species: [TUL, BASSWOOD, HMW]   # +HMW v0.16: 6/4 3ACOM over-fires 3-of-4 HMW (HMW-2/4/5 off, HMW-1 on); suppress to cut false positives, HMW-1 = operator maybe; ROK keeps 6/4 (ROK-4)
 
   - grade: WORMY
     colors: ["?"]
     species: [SMA]
     thicknesses: [4/4, 5/4, 6/4, 8/4]
 
-    # === FAS1W / FAS2W HMW 8/4 (operator discretion: active in hmw_2026-05-04,
+    #     FAS1W / FAS2W HMW 8/4 (operator discretion: active in hmw_2026-05-04,
     #     deselected in hmw_2026-05-18 / hmw_2026-06-01. Kept ON per the ROK
-    #     FAS STAIN precedent: prefer over-fire over missing an active product.) ===
+    #     FAS STAIN precedent: prefer over-fire over missing an active product.)    
   - grade: FAS1W OPT
     colors: [1White]
     species: [HMW]
@@ -143,7 +155,7 @@ auto_activate:
     species: ANY
     thicknesses: ["4/4", "5/4"]
 
-   # === SMA PR-SAP family (replaces Fix B's 8/4 SMA block) ===
+   # SMA PR-SAP family (replaces Fix B's 8/4 SMA block)    
   - grade: FASS OPT
     colors: [SAP]
     species: [SMA]
@@ -153,11 +165,11 @@ auto_activate:
     species: [SMA]
     thicknesses: ANY              # catalog has SEL SAP @ 4/4, 5/4, 6/4, 8/4
 
-  # === HMW PR-SAP family (replaces Fix B's 8/4 HMW block; 6/4 explicitly skipped) ===
+  #  HMW PR-SAP family (replaces Fix B's 8/4 HMW block; 6/4 explicitly skipped)    
   - grade: FASS OPT
     colors: [SAP]
     species: [HMW]
-    thicknesses: [4/4, 5/4, 8/4]  # HMW 6/4 deselected per fixture
+    thicknesses: [4/4, 5/4, 8/4]  # HMW 6/4 FASS = operator maybe (HMW-2/4/5 took, HMW-1 skipped); leave OFF per caution-first, operator adds
   - grade: SEL SAP OPT
     colors: [SAP]
     species: [HMW]
@@ -174,7 +186,7 @@ auto_activate:
     species: [ROK]
     thicknesses: ["4/4"]
   
-  # === 12/4 FASS OPT SAP ASH (catalog drift, added by Nate 2026-05-13) ===
+  # 12/4 FASS OPT SAP ASH (catalog drift, added by Nate 2026-05-13)    
   - grade: FASS OPT
     colors: [SAP]
     species: [ASH]
@@ -184,13 +196,13 @@ auto_activate:
     # ASH-only scope; do NOT extend to CHERRY without re-confirmation.
     # Remove this block + the catalog entry if reverted.
 
-  # === ASH 8/4 commons-Unsel auto_activate (v0.14) ===
+  # ASH 8/4 commons-Unsel auto_activate (v0.14)    
   - grade: 2COM OPT
     colors: [Unsel]
     species: [ASH]
     thicknesses: ["8/4"]
 
-  # === 4/4 commons-Unsel auto_activate
+  # 4/4 commons-Unsel auto_activate
   - grade: 1COM OPT
     colors: [Unsel]
     species: [HMW, SMA]
@@ -207,6 +219,7 @@ color_map:
   W2F:      [1White]
   W1F:      [1White]
   BROWN:    [Unsel, "?"]
+  "90/50":  [Unsel, "?"]   # v0.16: cherry 12/4 FAS9050 90/50 CONFIRMED 2-for-2 (cherry 5-20 + 6-18)
 
 width_tokens:
   RandomW:        { min: 0,    max: 99 }

@@ -1,5 +1,5 @@
 """
-parse_runsetup.py — Load a Baillie Run Set Up CSV into structured rows.
+parse_runsetup.py - Load a Baillie Run Set Up CSV into structured rows.
 
 Phase 1 parses only the Lumber section. Cants, Ties, and Pallet sections
 are read later.

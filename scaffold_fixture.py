@@ -1,5 +1,5 @@
 """
-scaffold_fixture.py — create the folder skeleton for a new test fixture.
+scaffold_fixture.py - create the folder skeleton for a new test fixture.
 
 Usage:
     python scaffold_fixture.py <species> <date>
@@ -92,7 +92,7 @@ def scaffold(species: str, iso_date: str, repo_root: Path) -> Path:
         writer = csv.writer(f)
         writer.writerow(["thick", "grade", "color", "width_token", "length_token"])
 
-    # live_counts.txt — comment-only template. Reader in check_match.py skips
+    # live_counts.txt - comment-only template. Reader in check_match.py skips
     # comment-only files, so this stays silent until you append a real line at
     # capture time. Catches catalog drift the per-product diff can't see.
     live_counts = fixture_dir / "live_counts.txt"
@@ -105,7 +105,7 @@ def scaffold(species: str, iso_date: str, repo_root: Path) -> Path:
         encoding="utf-8",
     )
 
-    # catalog.txt — auto-seed with the latest catalog filename in _catalogs/.
+    # catalog.txt - auto-seed with the latest catalog filename in _catalogs/.
     # Same lex-max logic as parse_products / dump_catalog default behavior.
     # Self-updating: drop a newer allproducts_*.xml into _catalogs/ and the
     # next scaffolded fixture picks it up automatically. If no catalogs exist
@@ -119,28 +119,28 @@ def scaffold(species: str, iso_date: str, repo_root: Path) -> Path:
         print(f"  ✓ Seeded catalog.txt → {latest_catalog}")
     else:
         print(
-            f"  ⚠ No allproducts_*.xml found in tests/fixtures/_catalogs/ — "
+            f"  ⚠ No allproducts_*.xml found in tests/fixtures/_catalogs/ - "
             f"catalog.txt NOT seeded. Drop a catalog there and write its "
             f"filename into catalog.txt manually before running check_match.",
             file=sys.stderr,
         )
 
-    # README.md stub — reminds you what goes where, in case you forget.
+    # README.md stub - reminds you what goes where, in case you forget.
     readme = fixture_dir / "README.md"
     readme.write_text(
         f"# Fixture: {species} {iso_date}\n"
         f"\n"
         f"## Drop here\n"
-        f"- `runsetup.xlsx` — original email attachment\n"
-        f"- `runsetup.csv` — Save As CSV from the .xlsx\n"
-        f"- `screenshots/<thick>_active.jpg` — Active Products, per thickness\n"
-        f"- `screenshots/<thick>_available.jpg` — Available Products, per thickness\n"
-        f"- `notes/<thick>.m4a` — voice memo if a deselect was non-obvious\n"
-        f"- `live_counts.txt` — append `[<SPECIES>] active=N available=N total=N` from\n"
+        f"- `runsetup.xlsx` - original email attachment\n"
+        f"- `runsetup.csv` - Save As CSV from the .xlsx\n"
+        f"- `screenshots/<thick>_active.jpg` - Active Products, per thickness\n"
+        f"- `screenshots/<thick>_available.jpg` - Available Products, per thickness\n"
+        f"- `notes/<thick>.m4a` - voice memo if a deselect was non-obvious\n"
+        f"- `live_counts.txt` - append `[<SPECIES>] active=N available=N total=N` from\n"
         f"  the bottom-of-pane counts at the Comact (template pre-seeded)\n"
         f"\n"
         f"## Auto-seeded\n"
-        f"- `catalog.txt` — points at the latest `_catalogs/allproducts_*.xml`.\n"
+        f"- `catalog.txt` - points at the latest `_catalogs/allproducts_*.xml`.\n"
         f"  If the catalog is refreshed mid-fixture, edit this manually to point\n"
         f"  at the new filename (or re-scaffold).\n"
         f"\n"

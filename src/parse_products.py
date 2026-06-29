@@ -1,5 +1,5 @@
 """
-parse_products.py — Load the Comact AllProducts.xml catalog into structured
+parse_products.py - Load the Comact AllProducts.xml catalog into structured
 Product records.
 
 Naming convention assumed:

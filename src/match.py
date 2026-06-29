@@ -1,5 +1,5 @@
 """
-match.py — Match Run Set Up Lumber rows to Comact AllProducts entries
+match.py - Match Run Set Up Lumber rows to Comact AllProducts entries
 using the rules in mapping.yaml.
 """
 from __future__ import annotations
