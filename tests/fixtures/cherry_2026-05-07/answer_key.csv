@@ -1,17 +1,17 @@
 thick,grade,color,width_token,length_token
-8/4,FAS9050 OPT,?,Rw > 5,"RandomL +3"""
-8/4,FASR OPT,?,Rw > 5,"RandomL +3"""
-8/4,1COM OPT,?,RandomW,"RandomL +3"""
-8/4,2COM OPT,?,RandomW,"RandomL +3"""
-8/4,3ACOM OPT,?,RandomW,"RandomL +3"""
-8/4,SEL OPT,?,Rw SEL,"RandomL +3"""
-8/4,SEL OPT,?,RandomW,Sel 6
-5/4,FAS9050 OPT,?,Rw > 5,"RandomL +3"""
-5/4,FASR OPT,?,Rw > 4 3/4,"RandomL +3"""
-5/4,1COM OPT,?,RandomW,"RandomL +3"""
-5/4,2COM OPT,?,RandomW,"RandomL +3"""
-5/4,3ACOM OPT,?,RandomW,"RandomL +3"""
+8/4,FAS9050 OPT,Unsel,Rw > 5,"RandomL +3"""
+8/4,FASR OPT,Unsel,Rw > 5,"RandomL +3"""
+8/4,1COM OPT,Unsel,RandomW,"RandomL +3"""
+8/4,2COM OPT,Unsel,RandomW,"RandomL +3"""
+8/4,3ACOM OPT,Unsel,RandomW,"RandomL +3"""
+8/4,SEL OPT,Unsel,Rw SEL,"RandomL +3"""
+8/4,SEL OPT,Unsel,RandomW,Sel 6
+5/4,FAS9050 OPT,Unsel,Rw > 5,"RandomL +3"""
+5/4,FASR OPT,Unsel,Rw > 4 3/4,"RandomL +3"""
+5/4,1COM OPT,Unsel,RandomW,"RandomL +3"""
+5/4,2COM OPT,Unsel,RandomW,"RandomL +3"""
+5/4,3ACOM OPT,Unsel,RandomW,"RandomL +3"""
 5/4,3B OPT,?,RandomW,"RandomL +3"""
-5/4,SEL OPT,?,Rw SEL,"RandomL +3"""
-5/4,SEL OPT,?,RandomW,Sel 6
-12/4,FAS9050 OPT,?,Rw > 5,"RandomL +3"""
+5/4,SEL OPT,Unsel,Rw SEL,"RandomL +3"""
+5/4,SEL OPT,Unsel,RandomW,Sel 6
+12/4,FAS9050 OPT,Unsel,Rw > 5,"RandomL +3"""
