@@ -51,7 +51,7 @@ pip install -r requirements.txt
 Run the diff harness against an existing fixture
 python tests/check_match.py tests/fixtures/sma_2026-04-27
 Scaffold a new fixture (creates folder, seeds catalog.txt from latest XML)
-python scaffold_fixture.py <species> <YYYY-MM-DD>
+`python scaffold_fixture.py <species> <YYYY-MM-DD>`
 
 ## Capture protocol (per setup, ~5 min total)
 
@@ -87,7 +87,7 @@ python scaffold_fixture.py <species> <YYYY-MM-DD>
 `mapping.yaml` is the source of truth. The shape is roughly:
 
 | Run Set Up term | Comact grade code(s) | Notes |
-|---|---|---|
+| --- | --- | --- |
 | **PR** (Prime) | `FAS` family ∩ catalog at this thickness × species, plus species/thickness-specific `auto_activate` blocks | "Prime" = FAS + SEL combined. Variant scope is catalog-intersected, not hardcoded. |
 | **1C / 2C** | `1COM` / `2COM` family ∩ catalog at this thickness × species | Color drives the variant. Multi-destination color union: when ≥2 destinations at the same thick/grade specify different colors, all color variants in catalog activate. |
 | **3A** | `3ACOM OPT` ∩ catalog at this thickness × species - **auto-activated** | Activates per-thickness from the catalog regardless of whether the Run Set Up has a 3A row. |
