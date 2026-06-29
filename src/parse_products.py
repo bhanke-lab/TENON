@@ -51,7 +51,8 @@ def load_products(xml_path):
         name = _get(el, "name") or _get(el, "Name")
         if not name:
             continue
-        color, species = _color_and_species_from_name(name)
+        grade = _get(el, "grade")
+        color, species = _color_and_species_from_name(name, grade)
         products.append(Product(
             instance_id=_get(el, "instanceId"),
             historical_id=_get(el, "historicalId"),
@@ -59,7 +60,7 @@ def load_products(xml_path):
             thick=_get(el, "thick"),
             width_token=_get(el, "width"),
             length_token=_get(el, "length"),
-            grade=_get(el, "grade"),
+            grade=grade,
             color=color,
             species=species,
             price=_to_float(_get(el, "price")),
@@ -72,12 +73,19 @@ def _get(el, field):
     if child is not None and child.text is not None:
         return child.text.strip()
     return el.get(field, "").strip()
-def _color_and_species_from_name(name):
+def _color_and_species_from_name(name, grade=""):
     tokens = name.split()
     if not tokens:
         return "?", ""
     species = tokens[-1]
-    color = tokens[-2] if len(tokens) >= 2 and tokens[-2] in KNOWN_COLORS else "?"
+    tail = tokens[:-1]
+    if grade:
+        gtoks = grade.split()
+        for i in range(len(tail) - len(gtoks) + 1):
+            if tail[i:i + len(gtoks)] == gtoks:
+                tail = tail[i + len(gtoks):]
+                break
+    color = next((t for t in tail if t in KNOWN_COLORS), "?")
     return color, species
 def _to_float(s):
     """Parse a price string. Rounds to 4 decimals to handle XML float quirks like 1.8000001."""
