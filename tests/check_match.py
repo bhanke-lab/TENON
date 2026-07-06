@@ -1,5 +1,5 @@
 """
-Diff harness: compare match_all() predictions against answer_key.csv ground truth.
+Part of TENON (github.com/bhanke-lab/TENON). Diff harness: compare match_all() predictions against answer_key.csv ground truth.
 
 Partial-fixture-aware: only diffs thicknesses present in answer_key.csv.
 

@@ -1,4 +1,6 @@
 """
+Part of TENON (github.com/bhanke-lab/TENON).
+
 parse_products.py - Load the Comact AllProducts.xml catalog into structured
 Product records.
 

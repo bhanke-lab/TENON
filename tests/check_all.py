@@ -1,4 +1,4 @@
-# tests/check_all.py
+# TENON full-corpus regression sweep
 import subprocess, sys, pathlib, re, os
 
 FIXTURES_DIR = pathlib.Path("tests/fixtures")

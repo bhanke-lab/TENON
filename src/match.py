@@ -1,4 +1,6 @@
 """
+Part of TENON (github.com/bhanke-lab/TENON).
+
 match.py - Match Run Set Up Lumber rows to Comact AllProducts entries
 using the rules in mapping.yaml.
 """

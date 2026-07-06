@@ -1,4 +1,6 @@
 """
+Part of TENON (github.com/bhanke-lab/TENON).
+
 parse_runsetup.py - Load a Baillie Run Set Up CSV into structured rows.
 
 Phase 1 parses only the Lumber section. Cants, Ties, and Pallet sections

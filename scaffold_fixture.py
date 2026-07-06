@@ -1,4 +1,6 @@
 """
+Part of TENON (github.com/bhanke-lab/TENON).
+
 scaffold_fixture.py - create the folder skeleton for a new test fixture.
 
 Usage:

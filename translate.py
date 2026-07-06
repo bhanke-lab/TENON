@@ -1,3 +1,4 @@
+# TENON - Translator Engine for Native Optimizer Notation
 """
 translate.py - Stage 2: read a Baillie Run Set Up .xlsx, run the match
 engine, and write a format-preserving copy with three columns appended
