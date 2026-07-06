@@ -1,4 +1,4 @@
-# comact-runsetup-translator
+# TENON
 
 Translates sawing orders into the Active Products list
 the Comact TrimExpert needs to run, and (later) the Bin Sorter sort assignments.
@@ -35,22 +35,40 @@ boards bypass the Comact and Bin Sorter entirely.
 
 ## Quickstart
 
-​
 Setup
+
+```bash
 python -m venv .venv
-Windows:
-.venvScriptsActivate.ps1
-Mac/Linux:
+# Windows
+.venv\Scripts\Activate.ps1
+# Mac/Linux
 source .venv/bin/activate
 pip install -r requirements.txt
+```
+
 Run the translator on a Run Set Up
+
+```bash
 python translate.py --runsetup path/to/runsetup.xlsx
+```
+
 Run the diff harness against an existing fixture
+
+```bash
 python tests/check_match.py tests/fixtures/tul_2026-07-01
+```
+
 Run all fixtures
+
+```bash
 python tests/check_all.py
+```
+
 Scaffold a new fixture
+
+```bash
 python scaffold_fixture.py <species> <YYYY-MM-DD>
+```
 
 ---
 
@@ -66,11 +84,16 @@ three columns appended to every Lumber row:
 Original formatting (logo, merged cells, header colors, column widths, fonts)
 is preserved end-to-end via `openpyxl`. The input file is never overwritten.
 
-​
-python translate.py --runsetup <path>
-[--products <allproducts.xml>]
-[--mapping  <mapping.yaml>]
-[--out      <output.xlsx>]
+Usage
+
+```bash
+python translate.py --runsetup <path> \
+   [--products <allproducts.xml>] \
+   [--mapping <mapping.yaml>] \
+   [--out <output.xlsx>]
+```
+
+Options
 
 - `--runsetup`: Baillie Group Run Set Up `.xlsx` (required)
 - `--products`: AllProducts.xml; defaults to newest file in `tests/fixtures/_catalogs/`
@@ -148,7 +171,7 @@ Back at the laptop (~5 min):
 ## Project layout
 
 ​
-comact-runsetup-translator/
+TENON/
 ├── translate.py              # CLI entry point: Run Set Up .xlsx -> augmented .xlsx
 ├── mapping.yaml              # Rules engine (grade_map, color_map, auto_activate)
 ├── scaffold_fixture.py       # Creates fixture folder + seeds catalog.txt
@@ -163,7 +186,7 @@ comact-runsetup-translator/
 ├── check_all.py          # Full corpus summary
 └── fixtures/
 ├── _catalogs/        # AllProducts.xml snapshots, pinned per fixture
-└── <species>_<date>/ # One folder per labeled Run Set Up
+└── `<species>_<date>/` # One folder per labeled Run Set Up
 ├── runsetup.xlsx
 ├── runsetup.csv
 ├── answer_key.csv
@@ -207,7 +230,7 @@ comact-runsetup-translator/
 `mapping.yaml` is the source of truth. The shape is roughly:
 
 | Run Set Up term | Comact grade code(s) | Notes |
-|---|---|---|
+| --- | --- | --- |
 | PR (Prime) | FAS family at this thickness x species, plus auto_activate blocks | "Prime" = FAS + SEL combined. Variant scope is catalog-intersected, not hardcoded. |
 | 1C / 2C | 1COM / 2COM family at this thickness x species | Color drives the variant. Multi-destination union: when 2+ destinations at the same thick/grade specify different colors, all color variants activate. |
 | 3A | 3ACOM OPT (auto-activated) | Fires per-thickness from the catalog regardless of whether the Run Set Up has a 3A row. Per-species excludes live in auto_activate. |
@@ -237,7 +260,7 @@ Current catalog: `allproducts_2026-07-06.xml` (identical product set to 2026-06-
 ## Accuracy
 
 | Metric | Value |
-|---|---|
+| --- | --- |
 | Fixtures | 45 |
 | Species | 10 |
 | Correct | 653 |
