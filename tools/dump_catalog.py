@@ -5,7 +5,7 @@ Permanent fixture-onboarding + diagnostic tool. Run this whenever:
   - A new fixture's answer key surfaces a product you don't recognize
     ("does this even exist in catalog?").
   - You suspect catalog drift (something active on the live Comact that
-    isn't in AllProducts.xml — see FAS OPT Unsel HMW gap, 2026-05-05).
+    isn't in AllProducts.xml - see FAS OPT Unsel HMW gap, 2026-05-05).
   - You want a per-(species × thickness × grade) sanity check before
     writing a new auto_activate rule in mapping.yaml.
 

@@ -12,8 +12,8 @@ Usage:
     python translate.py --runsetup <file.xlsx> [--products <catalog.xml>]
                         [--mapping mapping.yaml] [--out <file.xlsx>]
 
-Defaults: --products = newest tests/fixtures/_catalogs/allproducts_*.xml;
---out = <original>_comact.xlsx next to the input. Never overwrites input.
+Defaults: --products: newest tests/fixtures/_catalogs/allproducts_*.xml;
+--out: <original>_comact.xlsx next to the input. Never overwrites input.
 Known-zero inputs (9/4 rows; Beech/Butternut/Hickory runs) warn, not crash.
 
 The Baillie template ships with sheet protection enabled; the output copy

@@ -237,7 +237,7 @@ env/
 .env
 *.log
 
-# Excel — default ignore so you don't accidentally commit a sensitive Run Set Up
+# Excel - default ignore so you don't accidentally commit a sensitive Run Set Up
 *.xlsx
 *.xlsm
 
