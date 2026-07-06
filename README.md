@@ -138,7 +138,7 @@ hand, validated automatically against every prior labeled example.
 
 ## Capture protocol
 
-At the laptop when the Run Set Up email arrives:
+At the local machine when the Run Set Up email arrives:
 
 1. `python scaffold_fixture.py <species> <YYYY-MM-DD>`
    (lowercase species: sma, hmw, rok, ash, wok, walnut, cherry, birch, tul, basswood)
