@@ -181,15 +181,15 @@ TENON/
 │   ├── parse_products.py     # AllProducts.xml -> Product dataclasses
 │   └── match.py              # Match engine
 └── tests/
-├── check_match.py        # Per-fixture regression harness
-├── check_all.py          # Full corpus summary
+├── check_match.py            # Per-fixture regression harness
+├── check_all.py              # Full corpus summary
 └── fixtures/
-├── _catalogs/        # AllProducts.xml snapshots, pinned per fixture
-└── `<species>_<date>/` # One folder per labeled Run Set Up
+├── _catalogs/                # AllProducts.xml snapshots, pinned per fixture
+└── `<species>_<date>/`       # One folder per labeled Run Set Up
 ├── runsetup.xlsx
 ├── runsetup.csv
 ├── answer_key.csv
-├── catalog.txt   # One line: filename of the pinned catalog XML
+├── catalog.txt               # One line: filename of the pinned catalog XML
 ├── live_counts.txt
 └── screenshots/
 ```
