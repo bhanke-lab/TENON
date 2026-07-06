@@ -136,7 +136,7 @@ hand, validated automatically against every prior labeled example.
 
 ---
 
-## Capture protocol (~5 min per setup)
+## Capture protocol
 
 At the laptop when the Run Set Up email arrives:
 
@@ -144,22 +144,21 @@ At the laptop when the Run Set Up email arrives:
    (lowercase species: sma, hmw, rok, ash, wok, walnut, cherry, birch, tul, basswood)
 2. Save the `.xlsx` attachment as `runsetup.xlsx` in the new folder.
    Save As CSV -> `runsetup.csv`.
-3. Drop a fresh `allproducts_<date>.xml` into `tests/fixtures/_catalogs/`
+3. Fresh `allproducts_<date>.xml` goes into `tests/fixtures/_catalogs/`
    only if the Comact catalog was refreshed. The next scaffold run picks it up.
 
-At the Comact during/after changeover (~2 min):
+At the Comact during/after changeover:
 
 1. For each thickness the Run Set Up touches:
    - Filter Active Products -> screenshot -> `screenshots/<thick>_active.jpg`
      (e.g. `8_4_active.jpg`).
    - Filter Available Products -> screenshot -> `screenshots/<thick>_available.jpg`.
    - If anything was deselected for a non-obvious reason, record a 30-sec voice
-     memo -> `notes/<thick>.m4a`. That's the tribal knowledge the corpus is
-     really chasing.
+     memo as needed. (Not something I ever did, but it might help you so I kept it.) -> `notes/<thick>.m4a`.
 2. Set the species filter and append one line to `live_counts.txt`:
    `[<SPECIES>] active=<N> available=<N>`. Catches catalog drift.
 
-Back at the laptop (~5 min):
+On local machine:
 
 1. Transcribe screenshots into `answer_key.csv`. Use exact strings from the catalog.
 2. `python tests/check_match.py tests/fixtures/<fixture>`.
@@ -170,7 +169,7 @@ Back at the laptop (~5 min):
 
 ## Project layout
 
-​
+```text
 TENON/
 ├── translate.py              # CLI entry point: Run Set Up .xlsx -> augmented .xlsx
 ├── mapping.yaml              # Rules engine (grade_map, color_map, auto_activate)
@@ -193,6 +192,7 @@ TENON/
 ├── catalog.txt   # One line: filename of the pinned catalog XML
 ├── live_counts.txt
 └── screenshots/
+```
 
 ---
 
