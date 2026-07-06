@@ -45,6 +45,7 @@ class LumberRow:
     limit_pct: float | None
     sorts: int | None = None
     sticks: bool | None = None
+    source_row: int | None = None
 
 
 @dataclass
@@ -60,9 +61,9 @@ class RunSetUp:
 
 
 def load_runsetup(path):
-    path = Path(path)
-    rows = _read_csv(path)
+    return load_runsetup_from_rows(_read_csv(Path(path)))
 
+def load_runsetup_from_rows(rows):
     date = _find_label_value(rows, "Date:")
     species_raw = _find_label_value(rows, "Species:")
     species = SPECIES_MAP.get(species_raw, species_raw)
@@ -187,7 +188,8 @@ def _parse_lumber_section(rows):
     last_sticks = None
     last_sort = ""
 
-    for row in rows[header_idx + 1:]:
+    for r_idx in range(header_idx + 1, len(rows)):
+        row = rows[r_idx]
         if not any(c for c in row):
             continue
         if row[0].strip() in {"Cants", "Ties", "Pallet"}:
@@ -222,6 +224,7 @@ def _parse_lumber_section(rows):
             limit_pct=_parse_percent(cell("Limit")),
             sorts=sorts,
             sticks=sticks,
+            source_row=r_idx,
         ))
 
         last_destination = destination
