@@ -1,7 +1,36 @@
-# TENON
+<p align="center">
+  <img src="assets/logo.svg" alt="tenon" width="260">
+</p>
+
+<h1 align="center">TENON</h1>
+
+<p align="center">cut once</p>
+
+<p align="center">
+  <img alt="commits" src="https://img.shields.io/github/commit-activity/t/bhanke-lab/TENON?label=commits">
+  <img alt="last commit" src="https://img.shields.io/github/last-commit/bhanke-lab/TENON">
+  <img alt="license" src="https://img.shields.io/badge/license-PolyForm%20Noncommercial%201.0.0-blue">
+</p>
+
+<p align="center">
+  <a href="#translatepy">translate.py</a> &bull;
+  <a href="#quickstart">Quickstart</a> &bull;
+  <a href="#two-loops">Two loops</a> &bull;
+  <a href="#accuracy">Accuracy</a> &bull;
+  <a href="#roadmap">Roadmap</a>
+</p>
+
+---
 
 Translates sawing orders into the Active Products list
 the Comact TrimExpert needs to run, and (later) the Bin Sorter sort assignments.
+
+The name stands for Translator Engine for Native Optimizer Notation.
+It reads a sawing order and compiles it into the exact configuration
+the optimizer and sorting system needs. This same translation has historically
+been performed by an experienced operator from memory at every changeover. It is
+now codified in a rules engine backed by a labeled fixture corpus, automated to
+dramatically reduce error and time spent.
 
 Current version: v0.17 (`37d2b67`, 2026-07-06)
 Accuracy: 95.1% recall / 90.2% precision across 45 fixtures, 10 species (653/71/34).
@@ -10,12 +39,48 @@ For the current ruleset, see `mapping.yaml`. For what changed and why, see `git 
 
 ---
 
-The name stands for Translator Engine for Native Optimizer Notation.
-It reads a sawing order and compiles it into the exact configuration
-the optimizer and sorting system needs. This same translation has historically
-been performed by an experienced operator from memory at every changeover. It is
-now codified in a rules engine backed by a labeled fixture corpus, automated to
-dramatically reduce error and time spent.
+## translate.py
+
+<table width="100%">
+  <tr>
+    <td align="center" width="50%">
+      <img src="docs/images/runsetup-input.png" alt="Run Set Up input" width="100%"><br>
+      <sub><em>Run Set Up as it arrives by email</em></sub>
+    </td>
+    <td align="center" width="50%">
+      <img src="docs/images/translated-output.png" alt="Translated output" width="100%"><br>
+      <sub><em>Same sheet after translate.py: products, instance IDs, match count</em></sub>
+    </td>
+  </tr>
+</table>
+
+Reads a Baillie Group Run Set Up `.xlsx` and writes an augmented copy with
+three columns appended to every Lumber row:
+
+- `Comact Products`: newline-delimited active product names
+- `Instance IDs`: matching `instanceId` values, same order
+- `Match Count`: count of matched products; 0-match rows flagged red
+
+Original formatting (merged cells, header colors, column widths, fonts)
+is preserved end-to-end via `openpyxl`. The input file is never overwritten.
+
+Usage
+
+```bash
+python translate.py --runsetup <path> \
+   [--products <allproducts.xml>] \
+   [--mapping <mapping.yaml>] \
+   [--out <output.xlsx>]
+```
+
+Options
+
+- `--runsetup`: Baillie Group Run Set Up `.xlsx` (required)
+- `--products`: AllProducts.xml; defaults to newest file in `tests/fixtures/_catalogs/`
+- `--mapping`: rules file; defaults to `mapping.yaml` in the repo root
+- `--out`: output path; defaults to `<stem>_comact.xlsx` alongside the input
+
+---
 
 ## Why this exists
 
@@ -72,37 +137,20 @@ python scaffold_fixture.py <species> <YYYY-MM-DD>
 
 ---
 
-## translate.py
-
-Reads a Baillie Group Run Set Up `.xlsx` and writes an augmented copy with
-three columns appended to every Lumber row:
-
-- `Comact Products`: newline-delimited active product names
-- `Instance IDs`: matching `instanceId` values, same order
-- `Match Count`: count of matched products; 0-match rows flagged red
-
-Original formatting (logo, merged cells, header colors, column widths, fonts)
-is preserved end-to-end via `openpyxl`. The input file is never overwritten.
-
-Usage
-
-```bash
-python translate.py --runsetup <path> \
-   [--products <allproducts.xml>] \
-   [--mapping <mapping.yaml>] \
-   [--out <output.xlsx>]
-```
-
-Options
-
-- `--runsetup`: Baillie Group Run Set Up `.xlsx` (required)
-- `--products`: AllProducts.xml; defaults to newest file in `tests/fixtures/_catalogs/`
-- `--mapping`: rules file; defaults to `mapping.yaml` in the repo root
-- `--out`: output path; defaults to `<stem>_comact.xlsx` alongside the input
-
----
-
 ## Two loops
+
+<table width="100%">
+  <tr>
+    <td align="center" width="50%">
+      <img src="docs/images/trimexpert-actives.png" alt="TrimExpert Active Products" width="100%"><br>
+      <sub><em>Ground truth: Active Products pane at the Comact</em></sub>
+    </td>
+    <td align="center" width="50%">
+      <img src="docs/images/check-match-diff.png" alt="check_match diff" width="100%"><br>
+      <sub><em>check_match: predicted vs ground truth for one fixture</em></sub>
+    </td>
+  </tr>
+</table>
 
 ### Build-time loop
 
@@ -121,10 +169,10 @@ Each captured setup is a labeled training example:
 6. If a pattern shows up across 2+ fixtures, edit `mapping.yaml` and commit.
 7. Every commit re-runs `check_match.py` against ALL fixtures.
 
-This is not machine learning. With ~5-50 setups, ML would learn spurious
-correlations and lose auditability: unacceptable where "why did the optimizer
-pick this?" needs a defensible answer. Rules are discovered and codified by
-hand, validated automatically against every prior labeled example.
+This is not machine learning. Within 20 setups ML would learn spurious
+correlations and lose auditability: unacceptable in a zero-margin industry where
+"why did the optimizer pick this?" needs a defensible answer. Rules are discovered
+and codified by hand, validated automatically against every prior labeled example.
 
 ### Run-time loop
 
@@ -171,27 +219,33 @@ On local machine:
 
 ```text
 TENON/
-├── translate.py              # CLI entry point: Run Set Up .xlsx -> augmented .xlsx
-├── mapping.yaml              # Rules engine (grade_map, color_map, auto_activate)
-├── scaffold_fixture.py       # Creates fixture folder + seeds catalog.txt
+├── translate.py                       # CLI entry point: Run Set Up .xlsx -> augmented .xlsx
+├── mapping.yaml                       # Rules engine (grade_map, color_map, auto_activate)
+├── scaffold_fixture.py                # Creates fixture folder + seeds catalog.txt
 ├── requirements.txt
+├── assets/                            # Logo (logo.svg + alternates)
+├── docs/                              # README screenshots (docs/images/)
 ├── src/
-│   ├── parse_runsetup.py     # Lumber section parser -> LumberRow list
-│   │                         # load_runsetup(path) and load_runsetup_from_rows(rows)
-│   ├── parse_products.py     # AllProducts.xml -> Product dataclasses
-│   └── match.py              # Match engine
-└── tests/
-├── check_match.py            # Per-fixture regression harness
-├── check_all.py              # Full corpus summary
-└── fixtures/
-├── _catalogs/                # AllProducts.xml snapshots, pinned per fixture
-└── `<species>_<date>/`       # One folder per labeled Run Set Up
-├── runsetup.xlsx
-├── runsetup.csv
-├── answer_key.csv
-├── catalog.txt               # One line: filename of the pinned catalog XML
-├── live_counts.txt
-└── screenshots/
+│   ├── parse_runsetup.py              # Lumber section parser -> LumberRow list
+│   │                                  # load_runsetup(path) and load_runsetup_from_rows(rows)
+│   ├── parse_products.py              # AllProducts.xml -> Product dataclasses
+│   └── match.py                       # Match engine
+├── tests/
+│   ├── check_match.py                 # Per-fixture regression harness
+│   ├── check_all.py                   # Full corpus summary
+│   └── fixtures/
+│       ├── _catalogs/                 # AllProducts.xml snapshots, pinned per fixture
+│       └── <species>_<date>/          # One folder per labeled Run Set Up
+│           ├── runsetup.xlsx
+│           ├── runsetup.csv
+│           ├── answer_key.csv
+│           ├── catalog.txt            # One line: filename of the pinned catalog XML
+│           ├── live_counts.txt
+│           └── screenshots/
+└── tools/
+    ├── dump_catalog.py                # Catalog dump: grade x species matrix, drift + gap checks
+    ├── fixture_mismatch_analysis.py   # Extras/missing frequency across the whole corpus
+    └── fixture_row_debug.py           # Per-row match trace for one fixture
 ```
 
 ---
