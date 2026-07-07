@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- top face -->
+  <polygon points="10,44 178,44 194,30 26,30" fill="#BDBDBD"/>
+  <!-- right side face -->
+  <polygon points="178,44 194,30 194,156 178,170" fill="#757575"/>
+  <!-- front face -->
+  <polygon points="10,44 178,44 178,170 10,170" fill="#9E9E9E"/>
+
+  <!-- bad grain (left) -->
+  <g fill="none" stroke="#1A1A1A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.85">
+    <path d="M 16 90 L 20 86 L 24 93 L 28 87 L 32 93 L 36 86 L 40 94 L 44 88 L 48 93 L 52 86 L 56 94 L 60 87 L 64 92 L 68 90"/>
+    <path d="M 16 100 L 20 104 L 24 96 L 28 103 L 32 97 L 36 104 L 40 96 L 44 102 L 48 97 L 52 104 L 56 96 L 60 103 L 64 98 L 68 100"/>
+    <path d="M 16 110 L 20 106 L 24 113 L 28 107 L 32 113 L 36 106 L 40 114 L 44 108 L 48 113 L 52 106 L 56 114 L 60 107 L 64 112 L 68 110"/>
+    <path d="M 16 120 L 20 124 L 24 116 L 28 123 L 32 117 L 36 124 L 40 116 L 44 122 L 48 117 L 52 124 L 56 116 L 60 123 L 64 118 L 68 120"/>
+    <path d="M 16 130 L 20 126 L 24 133 L 28 127 L 32 133 L 36 126 L 40 134 L 44 128 L 48 133 L 52 126 L 56 134 L 60 127 L 64 132 L 68 130"/>
+  </g>
+
+  <!-- cast shadow on the wall beneath the tenon -->
+  <rect x="70" y="136" width="40" height="5" rx="2" fill="#000000" opacity="0.18"/>
+
+  <!-- the tenon -->
+  <!-- top shoulder (lit) -->
+  <polygon points="74,83 114,83 108,88 68,88" fill="#DDDDDD"/>
+  <!-- right shoulder (shadowed) -->
+  <polygon points="114,83 108,88 108,136 114,131" fill="#6A6A6A"/>
+  <!-- tenon face (closest plane, lightest gray) -->
+  <polygon points="68,88 108,88 108,136 68,136" fill="#CFCFCF"/>
+
+  <!-- clean grain (right) -->
+  <g fill="none" stroke="#1B5EA8" stroke-width="2" stroke-linecap="round" opacity="0.95">
+    <path d="M 114 90 C 124 87.5 134 92.5 144 90 C 154 87.5 164 92 174 90"/>
+    <path d="M 114 100 C 124 97.5 134 102.5 144 100 C 154 97.5 164 102 174 100"/>
+    <path d="M 114 110 C 124 107.5 134 112.5 144 110 C 154 107.5 164 112 174 110"/>
+    <path d="M 114 120 C 124 117.5 134 122.5 144 120 C 154 117.5 164 122 174 120"/>
+    <path d="M 114 130 C 124 127.5 134 132.5 144 130 C 154 127.5 164 132 174 130"/>
+  </g>
+</svg>

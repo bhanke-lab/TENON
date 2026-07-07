@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="30 30 140 140">
+  <!-- tenon profile -->
+  <path d="M 76 84 L 100 84 L 100 94 L 112 94 L 112 106 L 100 106 L 100 116 L 76 116 Z"
+        fill="none" stroke="#3A3A3A" stroke-width="3" stroke-linejoin="round"/>
+
+  <!-- noise in -->
+  <path d="M 40 100 L 44 95 L 48 104 L 52 96 L 56 103 L 60 95 L 64 105 L 68 97 L 72 103 L 76 100"
+        fill="none" stroke="#1A1A1A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- out -->
+  <path d="M 112 100 C 121 96.5 129 103.5 137 100 C 145 96.5 153 103 159 100"
+        fill="none" stroke="#1B5EA8" stroke-width="2.5" stroke-linecap="round"/>
+</svg>
