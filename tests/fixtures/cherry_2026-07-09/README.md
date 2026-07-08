@@ -1,6 +1,7 @@
 # Fixture: cherry 2026-07-09
 
 ## Drop here
+
 - `runsetup.xlsx` - original email attachment
 - `runsetup.csv` - Save As CSV from the .xlsx
 - `screenshots/<thick>_active.jpg` - Active Products, per thickness
@@ -10,11 +11,13 @@
   the bottom-of-pane counts at the Comact (template pre-seeded)
 
 ## Auto-seeded
+
 - `catalog.txt` - points at the latest `_catalogs/allproducts_*.xml`.
   If the catalog is refreshed mid-fixture, edit this manually to point
   at the new filename (or re-scaffold).
 
 Then transcribe screenshots into `answer_key.csv` and run:
-```
+
+```code
 python tests/check_match.py tests/fixtures/cherry_2026-07-09
 ```
