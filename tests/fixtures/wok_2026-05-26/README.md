@@ -21,3 +21,5 @@ Then transcribe screenshots into `answer_key.csv` and run:
 ```
 python tests/check_match.py tests/fixtures/wok_2026-05-26
 ```
+
+2026-07-08 policy change (v0.18, Nate directive): 4/4 SEL x2 (plus 4/4 Rw>5 FAS on wok_2026-05-13) now report as accepted misses. Correct behavior before the directive; do not chase as rule bugs.

@@ -143,6 +143,32 @@ def apply_auto_activate(thicks_in_runsetup, products, run_species, mapping, pred
     return added
 
 
+def apply_suppress(run_species, mapping, predicted):
+    """v0.18: directed deactivations (mapping["suppress"]). Runs AFTER all
+    matching and post-passes, so it covers every driving path (grade_map,
+    CHR expansion, union, auto_activate). Predictions only: never touches
+    the catalog, so the catalog-gap pre-flight and live_counts drift
+    checks are unaffected. Returns removed instance ids so callers can
+    scrub per-row lists too (translate.py writes from those)."""
+    removed = set()
+    for rule in mapping.get("suppress", []):
+        species_scope = rule.get("species", "ANY")
+        if species_scope != "ANY" and run_species not in species_scope:
+            continue
+        thick_scope = rule.get("thicknesses", "ANY")
+        width_scope = rule.get("width_tokens")
+        for iid, p in list(predicted.items()):
+            if p.grade != rule["grade"]:
+                continue
+            if thick_scope != "ANY" and p.thick not in thick_scope:
+                continue
+            if width_scope is not None and p.width_token not in width_scope:
+                continue
+            del predicted[iid]
+            removed.add(iid)
+    return removed
+
+
 def match_all(runsetup, products, mapping):
     """
     Returns (per_row_results, width_unmapped, length_unmapped, predicted).
@@ -180,6 +206,9 @@ def match_all(runsetup, products, mapping):
         mapping,
         predicted,
     )
+    removed = apply_suppress(runsetup.species, mapping, predicted)
+    out = [(row, [p for p in ms if p.instance_id not in removed])
+           for row, ms in out]
     return out, width_unmapped, length_unmapped, predicted
 
 

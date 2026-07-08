@@ -2,7 +2,7 @@
 # Translates Run Set Up grade/color codes to Comact catalog grade/color codes.
 # All translation rules live here as data, not code.
 #
-# Version: v0.17 (2026-07-06)
+# Version: v0.18 (2026-07-08)
 # Stage 1 corpus: 45 fixtures, 10 species. Cumulative 653/71/34 -> recall 95.1% (653/687), precision 90.2% (653/724).
 # v0.17 - Precision pass (caution-first). 1 edit: split the base 3ACOM auto's
 #         [4/4, 5/4, 8/4] into [4/4, 5/4] plus two 8/4 rules; the 8/4 SAP rule
@@ -270,3 +270,24 @@ length_tokens:
   'RandomL +3"':      { min: 7,  max: 16 }
   "Sel 6":            { min: 6,  max: 6 }
   "FAS OPT 6-7'":     { min: 6,  max: 7 }
+
+# Directed deactivations. Post-filter on the predicted set: covers every
+# driving path (grade_map, CHR expansion, union, auto_activate). Never
+# touches the catalog, so the catalog-gap pre-flight and live_counts
+# drift detection are unaffected.
+suppress:
+  # Nate directive 2026-07-08 (email, WOK 7-7-26 RSU review; "until we
+  # change them in the future"). 4/4 ONLY: 6/4 + 8/4 SEL stay active
+  # per the same run's ground truth, and Rw > 5 is the only FAS band at
+  # 6/4, 8/4, 10/4, so widening the thickness scope wipes FAS there.
+  - grade: SEL OPT          # both bands: RandomW x Sel 6 + Rw SEL
+    species: [WOK]
+    thicknesses: ["4/4"]
+  - grade: FAS OPT          # keep the Rw > 6 sibling
+    species: [WOK]
+    thicknesses: ["4/4"]
+    width_tokens: ["Rw > 5"]
+  - grade: CHAR OPT         # keep the Rw > 6 sibling; converts the 5-for-5 over-fire
+    species: [WOK]
+    thicknesses: ["4/4"]
+    width_tokens: ["Rw > 8"]
