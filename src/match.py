@@ -105,16 +105,41 @@ def apply_multi_destination_union(rows, products, run_species, mapping, predicte
                 predicted[p.instance_id] = p
                 added.add(p.instance_id)
     return added
-def apply_auto_activate(thicks_in_runsetup, products, run_species, mapping, predicted):
+
+
+def _rule_in_effect(rule, run_date_iso):
+    """v0.20: date-scoped rules. effective_from/effective_until are optional
+    ISO YYYY-MM-DD bounds on auto_activate/redirect/suppress entries.
+    effective_from is inclusive, effective_until is exclusive. A rule with
+    neither field applies for all time (backward compatible). If the run's
+    date couldn't be parsed, date-bounded rules are skipped rather than
+    guessed at."""
+    eff_from = rule.get("effective_from")
+    eff_until = rule.get("effective_until")
+    if eff_from is None and eff_until is None:
+        return True
+    if run_date_iso is None:
+        return False
+    if eff_from is not None and run_date_iso < eff_from:
+        return False
+    if eff_until is not None and run_date_iso >= eff_until:
+        return False
+    return True
+
+
+def apply_auto_activate(thicks_in_runsetup, products, run_species, mapping, predicted, run_date_iso=None):
     """
     v0.8 rule: apply mapping["auto_activate"] entries. Each entry has
     grade (str), colors (list[str]), species ("ANY" or list[str]),
     thicknesses ("ANY" or list[str]).
     Only activates at thicknesses the run actually touches (so we don't
     light up 8/4 HMW FAS1W on a 4/4-only run).
+    v0.20: date-scoped via effective_from/effective_until.
     """
     added = set()
     for rule in mapping.get("auto_activate", []):
+        if not _rule_in_effect(rule, run_date_iso):
+            continue
         species_scope = rule.get("species", "ANY")
         if species_scope != "ANY" and run_species not in species_scope:
             continue
@@ -143,15 +168,18 @@ def apply_auto_activate(thicks_in_runsetup, products, run_species, mapping, pred
     return added
 
 
-def apply_suppress(run_species, mapping, predicted):
+def apply_suppress(run_species, mapping, predicted, run_date_iso=None):
     """v0.18: directed deactivations (mapping["suppress"]). Runs AFTER all
     matching and post-passes, so it covers every driving path (grade_map,
     CHR expansion, union, auto_activate). Predictions only: never touches
     the catalog, so the catalog-gap pre-flight and live_counts drift
     checks are unaffected. Returns removed instance ids so callers can
-    scrub per-row lists too (translate.py writes from those)."""
+    scrub per-row lists too (translate.py writes from those).
+    v0.20: date-scoped via effective_from/effective_until."""
     removed = set()
     for rule in mapping.get("suppress", []):
+        if not _rule_in_effect(rule, run_date_iso):
+            continue
         species_scope = rule.get("species", "ANY")
         if species_scope != "ANY" and run_species not in species_scope:
             continue
@@ -168,17 +196,20 @@ def apply_suppress(run_species, mapping, predicted):
             removed.add(iid)
     return removed
 
-def apply_redirect(run_species, products, mapping, predicted):
+def apply_redirect(run_species, products, mapping, predicted, run_date_iso=None):
     """v0.19: directed redirects. Some grade/color combos are never actually
     produced - operator always diverts that material to a different catalog
     grade/color (e.g. HMW 2COM/3ACOM Unsel -> SUBG OPT). Removes the source
     product from predicted; if the destination product exists in the catalog
     at the same thickness, adds it instead. No-op (pure removal) if the
     destination doesn't exist at that thickness. Runs after
-    auto_activate/union, before suppress."""
+    auto_activate/union, before suppress.
+    v0.20: date-scoped via effective_from/effective_until."""
     removed = set()
     added = set()
     for rule in mapping.get("redirect", []):
+        if not _rule_in_effect(rule, run_date_iso):
+            continue
         species_scope = rule.get("species", "ANY")
         if species_scope != "ANY" and run_species not in species_scope:
             continue
@@ -238,11 +269,15 @@ def match_all(runsetup, products, mapping):
         runsetup.species,
         mapping,
         predicted,
+        run_date_iso=runsetup.date_iso,
     )
     redirected_removed, _ = apply_redirect(
-        runsetup.species, products, mapping, predicted
+        runsetup.species, products, mapping, predicted,
+        run_date_iso=runsetup.date_iso,
     )
-    removed = apply_suppress(runsetup.species, mapping, predicted) | redirected_removed
+    removed = apply_suppress(
+        runsetup.species, mapping, predicted, run_date_iso=runsetup.date_iso,
+    ) | redirected_removed
     out = [(row, [p for p in ms if p.instance_id not in removed])
         for row, ms in out]
     return out, width_unmapped, length_unmapped, predicted

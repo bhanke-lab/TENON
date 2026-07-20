@@ -2,23 +2,40 @@
 # Translates Run Set Up grade/color codes to Comact catalog grade/color codes.
 # All translation rules live here as data, not code.
 #
-# Version: v0.19 (2026-07-20)
-# Stage 1 corpus: 51 fixtures, 10 species. Cumulative 706/59/59 -> recall 92.3% (706/765), precision 92.3% (706/765).
-# v0.19 - ROK 2COM OPT promoted to auto_activate (ANY thickness, all catalog colors;
-#         operator confirmed 2026-07-20: 2COM is a standing always-active grade for
-#         ROK, no color sort). Evidence: rok_2026-06-04 6/4 2COM OPT Unsel
-#         MISSING-RULE + operator confirmation.
-#         Add redirect: HMW never actually runs 2COM OPT Unsel or 3ACOM OPT Unsel -
-#         operator always diverts that material to Sub Grade. New mapping.yaml
-#         `redirect` section + match.py apply_redirect() reroutes those predictions
-#         to SUBG OPT "?" at the same thickness (pure removal where SUBG OPT doesn't
-#         exist in the catalog at that thickness, e.g. HMW 6/4 and 8/4). Operator
-#         confirmed 2026-07-20.
-#         Known accepted exception: hmw_2026-05-04/05-18/06-01/06-15/06-29 predate
-#         this policy and still document 2COM/3ACOM OPT Unsel as active at 4/4 and
-#         8/4 (18 MISSING-RULE lines total) - left as-is, not retroactively corrected.
+# Version: v0.20 (2026-07-20)
+# Stage 1 corpus: 51 fixtures, 10 species. Cumulative 723/60/42 -> recall 94.5% (723/765), precision 92.3% (723/783).
+# v0.20 - Date-scoped rules. auto_activate/redirect/suppress entries now
+#         accept effective_from/effective_until (ISO YYYY-MM-DD, inclusive/
+#         exclusive). RunSetUp.date_iso added (parse_flexible_date in
+#         parse_runsetup.py). HMW subgrade redirect scoped
+#         effective_from: "2026-07-01" (placeholder cutover, not yet
+#         operator-confirmed). Reduces the v0.19 HMW exception from 18
+#         missing-rule lines to 2 residual items:
+#         hmw_2026-06-01 8/4 3ACOM OPT Unsel is now a false positive (this
+#         fixture was redirected even before 2026-07-01, so the cutover
+#         date is wrong for at least this case); hmw_2026-06-29 8/4 2COM
+#         OPT Unsel is still missing (no row in that runsetup drives it,
+#         same shape as the pre-v0.19 ROK 2COM gap - may need its own
+#         auto_activate rule for pre-cutover dates, not just a redirect). 
+#         Corpus: 706/59/59 -> 723/60/42; recall 92.3% -> 94.5%,
+#         precision unchanged at 92.3%.
 #
 # Changelog
+# v0.20 - Date-scoped rules. auto_activate/redirect/suppress entries now
+#         accept effective_from/effective_until (ISO YYYY-MM-DD, inclusive/
+#         exclusive). RunSetUp.date_iso added (parse_flexible_date in
+#         parse_runsetup.py). HMW subgrade redirect scoped
+#         effective_from: "2026-07-01" (placeholder cutover, not yet
+#         operator-confirmed). Reduces the v0.19 HMW exception from 18
+#         missing-rule lines to 2 residual items:
+#         hmw_2026-06-01 8/4 3ACOM OPT Unsel is now a false positive (this
+#         fixture was redirected even before 2026-07-01, so the cutover
+#         date is wrong for at least this case); hmw_2026-06-29 8/4 2COM
+#         OPT Unsel is still missing (no row in that runsetup drives it,
+#         same shape as the pre-v0.19 ROK 2COM gap - may need its own
+#         auto_activate rule for pre-cutover dates, not just a redirect). 
+#         Corpus: 706/59/59 -> 723/60/42; recall 92.3% -> 94.5%,
+#         precision unchanged at 92.3%.
 # v0.19 - ROK 2COM OPT promoted to auto_activate (ANY thickness, all catalog colors;
 #         operator confirmed 2026-07-20: 2COM is a standing always-active grade for
 #         ROK, no color sort). Evidence: rok_2026-06-04 6/4 2COM OPT Unsel
@@ -313,18 +330,26 @@ suppress:
     width_tokens: ["Rw > 8"]
 
 redirect:
-# HMW subgrade redirect (v0.19): 2COM OPT Unsel and 3ACOM OPT Unsel HMW are
-# never actually produced - operator always diverts that material to
-# subgrade. Real destination is SUBG OPT "?" at the same thickness.
-# HMW SUBG OPT only exists in the catalog at 4/4 and 5/4 (no 6/4/8/4 entry),
-# so at 8/4 this just removes the source product with no replacement.
+# HMW subgrade redirect (v0.19, date-scoped v0.20): 2COM OPT Unsel and
+# 3ACOM OPT Unsel HMW are never actually produced on/after effective_from -
+# operator always diverts that material to subgrade. Real destination is
+# SUBG OPT "?" at the same thickness. HMW SUBG OPT only exists in the
+# catalog at 4/4 and 5/4 (no 6/4/8/4 entry), so at 8/4 this just removes the
+# source product with no replacement. Before effective_from,
+# hmw_2026-05-04/05-18/06-01/06-15/06-29 document 2COM/3ACOM OPT Unsel as
+# genuinely active, so the rule stays off for those dates.
+# effective_from is a placeholder bounded only by evidence (last old-behavior
+# fixture 06-29, first new-behavior fixture 07-13) - confirm the real cutover
+# date with the operator and adjust if needed.
   - from_grade: 2COM OPT
     from_colors: [Unsel]
     to_grade: SUBG OPT
     to_color: "?"
     species: [HMW]
+    effective_from: "2026-07-01"
   - from_grade: 3ACOM OPT
     from_colors: [Unsel]
     to_grade: SUBG OPT
     to_color: "?"
     species: [HMW]
+    effective_from: "2026-07-01"

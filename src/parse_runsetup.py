@@ -31,6 +31,28 @@ SPECIES_MAP = {
     "Birch": "BIRCH",
 }
 
+# Accepted raw date formats from the Run Set Up "Date:" cell. Always
+# returns ISO YYYY-MM-DD, or None if unparseable (date-scoped rules then
+# just don't apply instead of crashing).
+DATE_FORMATS = (
+    "%Y-%m-%d",
+    "%m-%d-%Y",
+    "%m-%d-%y",
+    "%m/%d/%Y",
+    "%m/%d/%y",
+)
+
+
+def parse_flexible_date(raw):
+    from datetime import datetime
+    raw = (raw or "").strip()
+    for fmt in DATE_FORMATS:
+        try:
+            return datetime.strptime(raw, fmt).date().isoformat()
+        except ValueError:
+            continue
+    return None
+
 
 @dataclass
 class LumberRow:
@@ -53,6 +75,7 @@ class LumberRow:
 @dataclass
 class RunSetUp:
     date: str
+    date_iso: str | None  # normalized YYYY-MM-DD, or None if unparseable
     species: str          # Comact code (SMA, HMW, etc.)
     species_raw: str      # original ("Soft Maple")
     log_volume: int | None
@@ -67,6 +90,7 @@ def load_runsetup(path):
 
 def load_runsetup_from_rows(rows):
     date = _find_label_value(rows, "Date:")
+    date_iso = parse_flexible_date(date)
     species_raw = _find_label_value(rows, "Species:")
     species = SPECIES_MAP.get(species_raw, species_raw)
     log_volume_str = _find_label_value(rows, "Log Volume:")
@@ -83,6 +107,7 @@ def load_runsetup_from_rows(rows):
 
     return RunSetUp(
         date=date,
+        date_iso=date_iso,
         species=species,
         species_raw=species_raw,
         log_volume=log_volume,
