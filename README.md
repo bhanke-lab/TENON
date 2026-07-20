@@ -32,7 +32,7 @@ been performed by an experienced operator from memory at every changeover. It is
 now codified in a rules engine backed by a labeled fixture corpus, automated to
 dramatically reduce error and time spent.
 
-Current version: v0.19 (`<commit-hash>`, 2026-07-20)
+Current version: v0.19 (`253aa33`, 2026-07-20)
 Accuracy: 92.3% recall / 92.3% precision across 51 fixtures, 10 species (706/59/59).
 
 For the current ruleset, see `mapping.yaml`. For what changed and why, see `git log`.
@@ -322,7 +322,7 @@ Current catalog: `allproducts_2026-07-06.xml` (identical product set to 2026-06-
 | Missing | 59 |
 | Recall | 92.3% (706/765) |
 | Precision | 92.3% (706/765) |
-| Version | v0.19 / `<253aa33>` / 2026-07-20 |
+| Version | v0.19 / `253aa33` / 2026-07-20 |
 
 The residual gap sits in two classes that need a future layer, not more mapping rules:
 
