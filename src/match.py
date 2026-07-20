@@ -168,6 +168,39 @@ def apply_suppress(run_species, mapping, predicted):
             removed.add(iid)
     return removed
 
+def apply_redirect(run_species, products, mapping, predicted):
+    """v0.19: directed redirects. Some grade/color combos are never actually
+    produced - operator always diverts that material to a different catalog
+    grade/color (e.g. HMW 2COM/3ACOM Unsel -> SUBG OPT). Removes the source
+    product from predicted; if the destination product exists in the catalog
+    at the same thickness, adds it instead. No-op (pure removal) if the
+    destination doesn't exist at that thickness. Runs after
+    auto_activate/union, before suppress."""
+    removed = set()
+    added = set()
+    for rule in mapping.get("redirect", []):
+        species_scope = rule.get("species", "ANY")
+        if species_scope != "ANY" and run_species not in species_scope:
+            continue
+        from_colors = set(rule["from_colors"])
+        for iid, p in list(predicted.items()):
+            if p.grade != rule["from_grade"] or p.color not in from_colors:
+                continue
+            del predicted[iid]
+            removed.add(iid)
+            dest = next(
+                (d for d in products
+                 if d.species == run_species
+                 and d.thick == p.thick
+                 and d.grade == rule["to_grade"]
+                 and d.color == rule["to_color"]),
+                None,
+            )
+            if dest is not None and dest.instance_id not in predicted:
+                predicted[dest.instance_id] = dest
+                added.add(dest.instance_id)
+    return removed, added
+
 
 def match_all(runsetup, products, mapping):
     """
@@ -206,9 +239,12 @@ def match_all(runsetup, products, mapping):
         mapping,
         predicted,
     )
-    removed = apply_suppress(runsetup.species, mapping, predicted)
+    redirected_removed, _ = apply_redirect(
+        runsetup.species, products, mapping, predicted
+    )
+    removed = apply_suppress(runsetup.species, mapping, predicted) | redirected_removed
     out = [(row, [p for p in ms if p.instance_id not in removed])
-           for row, ms in out]
+        for row, ms in out]
     return out, width_unmapped, length_unmapped, predicted
 
 

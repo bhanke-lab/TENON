@@ -2,24 +2,40 @@
 # Translates Run Set Up grade/color codes to Comact catalog grade/color codes.
 # All translation rules live here as data, not code.
 #
-# Version: v0.18 (2026-07-08)
-# Stage 1 corpus: 45 fixtures, 10 species. Cumulative 653/71/34 -> recall 95.1% (653/687), precision 90.2% (653/724).
-# v0.17 - Precision pass (caution-first). 1 edit: split the base 3ACOM auto's
-#         [4/4, 5/4, 8/4] into [4/4, 5/4] plus two 8/4 rules; the 8/4 SAP rule
-#         excludes SMA. Evidence (answer-key audit 2026-07-06): 8/4 3ACOM OPT SAP
-#         predicted-but-off in SMA-1/3/4/5, taken in SMA-6 -> 4-of-5 deselect,
-#         clears the HMW 6/4 3ACOM bar. SMA-6's 8/4 3ACOM SAP = operator maybe
-#         (26/2/0 -> 25/2/1); cuts 4 extras corpus-wide, zero new false positives.
-#         Considered + rejected (same audit):
-#         (1) SG->1COMB prune for SMA: 1COMB OPT Unsel ACTIVE in sma_2026-05-11 +
-#         sma_2026-05-27 keys -> 2 took / 3 off, below the suppress bar; discretion.
-#         (2) 4/4 3ACOM SAP drop for SMA: active 4-of-5, off only SMA-6; keep.
-#         (3) ASH/CHERRY PR->SEL excludes: SEL OPT active in ASH-1/2/3 + CHERRY-1/2/3;
-#         recent SEL extras are run-to-run discretion, a discretion-layer item.
-#         (4) ASH 12/4 FAS OPT Unsel auto: active 3-of-4 (ASH-2 off); rejected per
-#         caution-first, same shape as the rejected HMW 6/4 FASS auto.
+# Version: v0.19 (2026-07-20)
+# Stage 1 corpus: 51 fixtures, 10 species. Cumulative 706/59/59 -> recall 92.3% (706/765), precision 92.3% (706/765).
+# v0.19 - ROK 2COM OPT promoted to auto_activate (ANY thickness, all catalog colors;
+#         operator confirmed 2026-07-20: 2COM is a standing always-active grade for
+#         ROK, no color sort). Evidence: rok_2026-06-04 6/4 2COM OPT Unsel
+#         MISSING-RULE + operator confirmation.
+#         Add redirect: HMW never actually runs 2COM OPT Unsel or 3ACOM OPT Unsel -
+#         operator always diverts that material to Sub Grade. New mapping.yaml
+#         `redirect` section + match.py apply_redirect() reroutes those predictions
+#         to SUBG OPT "?" at the same thickness (pure removal where SUBG OPT doesn't
+#         exist in the catalog at that thickness, e.g. HMW 6/4 and 8/4). Operator
+#         confirmed 2026-07-20.
+#         Known accepted exception: hmw_2026-05-04/05-18/06-01/06-15/06-29 predate
+#         this policy and still document 2COM/3ACOM OPT Unsel as active at 4/4 and
+#         8/4 (18 MISSING-RULE lines total) - left as-is, not retroactively corrected.
 #
 # Changelog
+# v0.19 - ROK 2COM OPT promoted to auto_activate (ANY thickness, all catalog colors;
+#         operator confirmed 2026-07-20: 2COM is a standing always-active grade for
+#         ROK, no color sort). Evidence: rok_2026-06-04 6/4 2COM OPT Unsel
+#         MISSING-RULE + operator confirmation.
+#         Add redirect: HMW never actually runs 2COM OPT Unsel or 3ACOM OPT Unsel -
+#         operator always diverts that material to Sub Grade. New mapping.yaml
+#         `redirect` section + match.py apply_redirect() reroutes those predictions
+#         to SUBG OPT "?" at the same thickness (pure removal where SUBG OPT doesn't
+#         exist in the catalog at that thickness, e.g. HMW 6/4 and 8/4). Operator
+#         confirmed 2026-07-20.
+#         Known accepted exception: hmw_2026-05-04/05-18/06-01/06-15/06-29 predate
+#         this policy and still document 2COM/3ACOM OPT Unsel as active at 4/4 and
+#         8/4 (18 MISSING-RULE lines total) - left as-is, not retroactively corrected.
+# v0.18 - WOK 4/4 directed suppressions (operator directive 2026-07-08, email re:
+#         WOK 7-7-26 RSU review, "until we change them in the future"). 4/4 ONLY:
+#         suppress SEL OPT, FAS OPT [Rw > 5], CHAR OPT [Rw > 8]; 6/4 + 8/4 + 10/4
+#         SEL/FAS/CHAR stay active per that run's ground truth.
 # v0.17 - Precision pass (caution-first). 1 edit: split the base 3ACOM auto's
 #         [4/4, 5/4, 8/4] into [4/4, 5/4] plus two 8/4 rules; the 8/4 SAP rule
 #         excludes SMA. Evidence (answer-key audit 2026-07-06): 8/4 3ACOM OPT SAP
@@ -163,6 +179,10 @@ auto_activate:
     species: ANY
     thicknesses: [6/4]
     exclude_species: [TUL, BASSWOOD, HMW] # +HMW v0.16: 6/4 3ACOM over-fires 3-of-4 HMW (HMW-2/4/5 off, HMW-1 on); suppress to cut false positives, HMW-1 = operator maybe; ROK keeps 6/4 (ROK-4)
+  - grade: 2COM OPT
+    colors: [Unsel, SAP, "?", 1White]
+    species: [ROK]
+    thicknesses: ANY
 
   - grade: WORMY
     colors: ["?"]
@@ -276,7 +296,7 @@ length_tokens:
 # touches the catalog, so the catalog-gap pre-flight and live_counts
 # drift detection are unaffected.
 suppress:
-  # Nate directive 2026-07-08 (email, WOK 7-7-26 RSU review; "until we
+  # Directive 2026-07-08 (email, WOK 7-7-26 RSU review; "until we
   # change them in the future"). 4/4 ONLY: 6/4 + 8/4 SEL stay active
   # per the same run's ground truth, and Rw > 5 is the only FAS band at
   # 6/4, 8/4, 10/4, so widening the thickness scope wipes FAS there.
@@ -291,3 +311,20 @@ suppress:
     species: [WOK]
     thicknesses: ["4/4"]
     width_tokens: ["Rw > 8"]
+
+redirect:
+# HMW subgrade redirect (v0.19): 2COM OPT Unsel and 3ACOM OPT Unsel HMW are
+# never actually produced - operator always diverts that material to
+# subgrade. Real destination is SUBG OPT "?" at the same thickness.
+# HMW SUBG OPT only exists in the catalog at 4/4 and 5/4 (no 6/4/8/4 entry),
+# so at 8/4 this just removes the source product with no replacement.
+  - from_grade: 2COM OPT
+    from_colors: [Unsel]
+    to_grade: SUBG OPT
+    to_color: "?"
+    species: [HMW]
+  - from_grade: 3ACOM OPT
+    from_colors: [Unsel]
+    to_grade: SUBG OPT
+    to_color: "?"
+    species: [HMW]
