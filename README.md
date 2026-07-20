@@ -32,8 +32,8 @@ been performed by an experienced operator from memory at every changeover. It is
 now codified in a rules engine backed by a labeled fixture corpus, automated to
 dramatically reduce error and time spent.
 
-Current version: v0.19 (`253aa33`, 2026-07-20)
-Accuracy: 92.3% recall / 92.3% precision across 51 fixtures, 10 species (706/59/59).
+Current version: v0.20 (`f0d66dd`, 2026-07-20)
+Accuracy: 94.5% recall / 92.3% precision across 51 fixtures, 10 species (723/60/42).
 
 For the current ruleset, see `mapping.yaml`. For what changed and why, see `git log`.
 
@@ -317,12 +317,12 @@ Current catalog: `allproducts_2026-07-06.xml` (identical product set to 2026-06-
 | --- | --- |
 | Fixtures | 51 |
 | Species | 10 |
-| Correct | 706 |
-| Extras | 59 |
-| Missing | 59 |
-| Recall | 92.3% (706/765) |
-| Precision | 92.3% (706/765) |
-| Version | v0.19 / `253aa33` / 2026-07-20 |
+| Correct | 723 |
+| Extras | 60 |
+| Missing | 42 |
+| Recall | 94.5% (723/765) |
+| Precision | 92.3% (723/783) |
+| Version | v0.20 / `f0d66dd` / 2026-07-20 |
 
 The residual gap sits in two classes that need a future layer, not more mapping rules:
 
